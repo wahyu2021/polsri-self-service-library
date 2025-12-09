@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Repositories;
+
+use App\Interfaces\BookRepositoryInterface;
+use App\Models\Book;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
+
+class BookRepository implements BookRepositoryInterface
+{
+    public function getAllPaginated(array $filters = [], int $perPage = 10): LengthAwarePaginator
+    {
+        $query = Book::query();
+
+        if (isset($filters['search']) && $filters['search']) {
+            $search = $filters['search'];
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                  ->orWhere('isbn', 'like', "%{$search}%")
+                  ->orWhere('author', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->latest()->paginate($perPage);
+    }
+
+    public function getAvailableBooks(): Collection
+    {
+        return Book::where('stock', '>', 0)->orderBy('title')->get();
+    }
+
+    public function findById(int $id): ?Book
+    {
+        return Book::find($id);
+    }
+
+    public function create(array $data): Book
+    {
+        return Book::create($data);
+    }
+
+    public function update(Book $book, array $data): Book
+    {
+        $book->update($data);
+        return $book;
+    }
+
+    public function delete(Book $book): bool
+    {
+        return $book->delete();
+    }
+}

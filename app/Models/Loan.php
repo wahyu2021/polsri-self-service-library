@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use App\Enums\LoanStatus;
+use Carbon\Carbon;
+
 class Loan extends Model
 {
     use HasFactory;
@@ -24,6 +27,7 @@ class Loan extends Model
         'borrow_date' => 'date',
         'due_date' => 'date',
         'return_date' => 'date',
+        'status' => LoanStatus::class,
     ];
 
     public function user()
@@ -34,5 +38,13 @@ class Loan extends Model
     public function book()
     {
         return $this->belongsTo(Book::class);
+    }
+
+    /**
+     * Check if loan is overdue.
+     */
+    public function isOverdue(): bool
+    {
+        return $this->status === LoanStatus::BORROWED && Carbon::now()->gt($this->due_date);
     }
 }

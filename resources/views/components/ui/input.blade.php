@@ -11,7 +11,7 @@
         name="{{ $name }}"
         placeholder="{{ $placeholder }}"
         {{ $disabled ? 'disabled' : '' }} 
-        {!! $attributes->merge(['class' => 'w-full px-4 py-2.5 rounded-lg border text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-polsri-primary focus:border-transparent transition duration-200 ease-in-out sm:text-sm disabled:bg-slate-100 disabled:cursor-not-allowed ' . ($errors->has($name) ? 'border-danger focus:ring-danger' : 'border-slate-300')]) !!}
+        {!! $attributes->merge(['class' => 'w-full px-4 py-3 rounded-xl border bg-white text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition-all duration-200 ease-in-out sm:text-sm disabled:bg-slate-100 disabled:cursor-not-allowed ' . ($errors->has($name) ? 'border-danger focus:ring-danger/20' : 'border-slate-200 hover:border-slate-300')]) !!}
     >
 
     @error($name)

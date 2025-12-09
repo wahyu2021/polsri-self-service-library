@@ -4,7 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 // Guest Routes
@@ -20,7 +20,50 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'destroy'])->name('logout');
 
-    Route::get('/dashboard', function () {
-        return view('dashboard'); // We will create this view next
-    })->name('dashboard');
+    // Student Routes
+    Route::middleware('role:mahasiswa')->name('student.')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [\App\Http\Controllers\Student\DashboardController::class, 'index'])->name('dashboard');
+        
+        // Smart Logbook (Scan Masuk)
+        Route::get('/logbook', [\App\Http\Controllers\Student\ScanController::class, 'index'])->name('logbook.index');
+        Route::post('/logbook', [\App\Http\Controllers\Student\ScanController::class, 'store'])->name('logbook.store');
+
+        // Self-Service Borrowing
+        Route::get('/borrow', [\App\Http\Controllers\Student\LoanController::class, 'create'])->name('borrow.index');
+        Route::post('/borrow/lookup', [\App\Http\Controllers\Student\LoanController::class, 'lookup'])->name('borrow.lookup');
+        Route::post('/borrow', [\App\Http\Controllers\Student\LoanController::class, 'store'])->name('borrow.store');
+
+        // Exit Pass (Ticket)
+        Route::get('/ticket/{loan}', [\App\Http\Controllers\Student\LoanController::class, 'showTicket'])->name('ticket.show');
+        Route::get('/ticket/{loan}/status', [\App\Http\Controllers\Student\LoanController::class, 'checkStatus'])->name('ticket.status');
+
+        // My Collection
+        Route::get('/collection', [\App\Http\Controllers\Student\LoanController::class, 'collection'])->name('collection.index');
+
+        // Profile
+        Route::get('/profile', [\App\Http\Controllers\Student\ProfileController::class, 'index'])->name('profile.index');
+    });
+
+    // Admin Routes
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        
+        // Book Management
+        Route::resource('books', \App\Http\Controllers\Admin\BookController::class);
+
+        // Circulation Management
+        Route::resource('loans', \App\Http\Controllers\Admin\LoanController::class)->only(['index', 'create', 'store']);
+        Route::put('loans/{loan}/return', [\App\Http\Controllers\Admin\LoanController::class, 'returnBook'])->name('loans.return');
+
+        // Settings
+        Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+        Route::put('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+
+        // User Management
+        Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
+
+        // Reports
+        Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+    });
 });
