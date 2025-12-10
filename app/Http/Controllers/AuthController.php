@@ -33,7 +33,7 @@ class AuthController extends Controller
             return redirect()->intended(route('admin.dashboard'));
         }
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route('login'));
     }
 
     /**
@@ -59,7 +59,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('dashboard'));
+        return redirect(route('login'));
     }
 
     /**

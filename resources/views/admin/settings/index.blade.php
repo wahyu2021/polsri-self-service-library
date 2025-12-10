@@ -1,101 +1,102 @@
 <x-layouts.admin title="Pengaturan Sistem">
 
-    <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-    <div class="max-w-4xl mx-auto">
-        <!-- Header -->
+    <div class="max-w-7xl mx-auto">
         <x-ui.header title="Pengaturan Sistem" subtitle="Konfigurasi parameter global aplikasi." />
 
         @if(session('success'))
             <x-ui.alert type="success" :message="session('success')" />
         @endif
 
-        <form action="{{ route('admin.settings.update') }}" method="POST">
+        <form action="{{ route('admin.settings.update') }}" method="POST" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             @csrf
             @method('PUT')
 
-            <!-- Lokasi Card -->
-            <x-ui.card class="mb-6">
-                <div class="p-6 border-b border-slate-50 bg-slate-50/50">
-                    <h3 class="font-bold text-slate-900">Validasi Lokasi (Geofencing)</h3>
-                    <p class="text-xs text-slate-500 mt-1">Tentukan titik pusat perpustakaan dan radius toleransi absensi.</p>
-                </div>
-                
-                <div class="p-6 space-y-6">
-                    <!-- Map Container -->
-                    <div class="rounded-xl overflow-hidden border border-slate-200 shadow-sm relative">
-                        <div id="map" class="h-[400px] w-full z-0"></div>
-                        
-                        <!-- Map Legend/Info -->
-                        <div class="absolute top-4 right-4 z-[400] bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-md border border-slate-100 text-xs max-w-[200px]">
-                            <p class="font-semibold text-slate-800 mb-1">Panduan:</p>
-                            <ul class="list-disc list-inside text-slate-600 space-y-1">
-                                <li>Geser <strong>Marker Biru</strong> untuk menentukan titik pusat.</li>
-                                <li>Klik di peta untuk memindahkan pin.</li>
-                                <li>Lingkaran biru adalah area radius.</li>
-                            </ul>
-                        </div>
+            <div class="lg:col-span-2 space-y-6">
+                <x-ui.card>
+                    <div class="p-6 border-b border-slate-50 bg-slate-50/50">
+                        <h3 class="font-bold text-slate-900">Validasi Lokasi (Geofencing)</h3>
+                        <p class="text-xs text-slate-500 mt-1">Tentukan titik pusat perpustakaan dan radius toleransi absensi.</p>
                     </div>
+                    
+                    <div class="p-6 space-y-6">
+                        <div class="rounded-xl overflow-hidden border border-slate-200 shadow-sm relative">
+                            <div id="map" class="h-[400px] w-full z-0"></div>
+                            
+                            <div class="absolute top-4 right-4 z-[400] bg-white/90 backdrop-blur-sm p-3 rounded-lg shadow-md border border-slate-100 text-xs max-w-[200px]">
+                                <p class="font-semibold text-slate-800 mb-1">Panduan:</p>
+                                <ul class="list-disc list-inside text-slate-600 space-y-1">
+                                    <li>Geser <strong>Marker Biru</strong> untuk titik pusat.</li>
+                                    <li>Klik peta untuk memindahkan pin.</li>
+                                    <li>Area oranye adalah radius validasi.</li>
+                                </ul>
+                            </div>
+                        </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <!-- Inputs (Readonly recommended but editable if needed) -->
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Latitude</label>
-                            <input type="text" id="lat_input" name="library_lat" value="{{ $settings['library_lat']->value ?? '-2.986383' }}" 
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Longitude</label>
-                            <input type="text" id="lng_input" name="library_lng" value="{{ $settings['library_lng']->value ?? '104.730248' }}" 
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition" readonly>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Radius (Meter)</label>
-                            <div class="relative">
-                                <input type="number" id="radius_input" name="validation_radius" value="{{ $settings['validation_radius']->value ?? '50' }}" 
-                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition" oninput="updateCircle()">
-                                <span class="absolute right-4 top-2.5 text-slate-400 text-sm font-medium">m</span>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Latitude</label>
+                                <input type="text" id="lat_input" name="library_lat" value="{{ $settings['library_lat']->value ?? '-2.986383' }}" 
+                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Longitude</label>
+                                <input type="text" id="lng_input" name="library_lng" value="{{ $settings['library_lng']->value ?? '104.730248' }}" 
+                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 text-slate-600 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Radius (Meter)</label>
+                                <div class="relative">
+                                    <input type="number" id="radius_input" name="validation_radius" value="{{ $settings['validation_radius']->value ?? '50' }}" 
+                                        class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition" oninput="updateCircle()">
+                                    <span class="absolute right-4 top-2.5 text-slate-400 text-sm font-medium">m</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </x-ui.card>
+                </x-ui.card>
+            </div>
 
-            <!-- Keuangan Card -->
-            <x-ui.card class="mb-8">
-                <div class="p-6 border-b border-slate-50 bg-slate-50/50">
-                    <h3 class="font-bold text-slate-900">Keuangan & Denda</h3>
-                </div>
-                <div class="p-6">
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Tarif Denda per Hari</label>
-                        <div class="relative max-w-xs">
-                            <span class="absolute left-4 top-2.5 text-slate-500 text-sm font-bold">Rp</span>
-                            <input type="number" name="fine_per_day" value="{{ $settings['fine_per_day']->value ?? '1000' }}" 
-                                class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition font-bold text-slate-900" required>
+            <div class="lg:col-span-1 space-y-6">
+                <x-ui.card>
+                    <div class="p-6 border-b border-slate-50 bg-slate-50/50">
+                        <h3 class="font-bold text-slate-900">Keuangan & Denda</h3>
+                        <p class="text-xs text-slate-500 mt-1">Konfigurasi tarif denda keterlambatan.</p>
+                    </div>
+                    <div class="p-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Tarif Denda per Hari</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-2.5 text-slate-500 text-sm font-bold">Rp</span>
+                                <input type="number" name="fine_per_day" value="{{ $settings['fine_per_day']->value ?? '1000' }}" 
+                                    class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition font-bold text-slate-900" required>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-2">Dihitung otomatis saat buku dikembalikan.</p>
                         </div>
                     </div>
-                </div>
-            </x-ui.card>
+                </x-ui.card>
 
-            <div class="flex justify-end">
-                <button type="submit" class="px-8 py-3 bg-polsri-primary hover:bg-orange-600 text-white font-bold rounded-xl shadow-lg shadow-orange-500/20 transition-all hover:-translate-y-0.5">
-                    Simpan Konfigurasi
-                </button>
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <button type="submit" class="w-full px-8 py-3 bg-polsri-primary hover:bg-orange-600 text-white font-bold rounded-xl shadow-lg shadow-orange-500/20 transition-all hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                        Simpan Konfigurasi
+                    </button>
+                </div>
             </div>
 
         </form>
     </div>
 
-    <!-- Map Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // 1. Get Initial Values
-            var lat = parseFloat(document.getElementById('lat_input').value) || -2.986383; // Default Polsri
-            var lng = parseFloat(document.getElementById('lng_input').value) || 104.730248;
-            var radius = parseInt(document.getElementById('radius_input').value) || 50;
+            var lat = Number("{{ $settings['library_lat']->value ?? '-2.986383' }}");
+            var lng = Number("{{ $settings['library_lng']->value ?? '104.7315341' }}");
+            var radius = Number("{{ $settings['validation_radius']->value ?? '50' }}");
 
             // 2. Initialize Map
             var map = L.map('map').setView([lat, lng], 17);
