@@ -30,6 +30,7 @@ class DashboardController extends Controller
             'user' => $user,
             'activeLoans' => $data['activeLoans'],
             'historyLoans' => $data['historyLoans'],
+            'notifications' => $data['notifications'],
             'recommendations' => $recommendations
         ]);
     }

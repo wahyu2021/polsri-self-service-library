@@ -6,33 +6,56 @@ use App\Http\Controllers\Controller;
 use App\Models\Loan;
 use App\Services\BookService;
 use App\Services\LoanService;
-use App\Services\UserService; // Assuming usage if needed
+use App\Http\Requests\Student\StoreLoanRequest;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
+/**
+ * Handles student loan operations including scanning, borrowing, and viewing collections.
+ */
 class LoanController extends Controller
 {
+    /**
+     * @var LoanService
+     */
     protected LoanService $loanService;
+
+    /**
+     * @var BookService
+     */
     protected BookService $bookService;
 
+    /**
+     * @param LoanService $loanService
+     * @param BookService $bookService
+     */
     public function __construct(LoanService $loanService, BookService $bookService)
     {
         $this->loanService = $loanService;
         $this->bookService = $bookService;
     }
 
-    // --- Halaman Scan & Borrow ---
-    public function create()
+    /**
+     * Show the scan and borrow interface.
+     *
+     * @return View
+     */
+    public function create(): View
     {
         return view('student.borrow');
     }
 
-    public function store(Request $request)
+    /**
+     * Store a new loan request.
+     *
+     * @param StoreLoanRequest $request
+     * @return RedirectResponse
+     */
+    public function store(StoreLoanRequest $request): RedirectResponse
     {
-        $request->validate([
-            'isbn' => 'required|string',
-        ]);
-
         try {
             $loan = $this->loanService->createSelfServiceLoan(Auth::id(), $request->isbn);
             
@@ -43,8 +66,13 @@ class LoanController extends Controller
         }
     }
 
-    // --- Lookup Buku via AJAX ---
-    public function lookup(Request $request)
+    /**
+     * Look up book details via ISBN.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function lookup(Request $request): JsonResponse
     {
         $request->validate(['isbn' => 'required|string']);
         
@@ -63,8 +91,13 @@ class LoanController extends Controller
         ]);
     }
 
-    // --- Halaman Exit Pass (Tiket) ---
-    public function showTicket(Loan $loan)
+    /**
+     * Display the exit pass (ticket) for a loan.
+     *
+     * @param Loan $loan
+     * @return View
+     */
+    public function showTicket(Loan $loan): View
     {
         if ($loan->user_id !== Auth::id()) {
             abort(403);
@@ -73,7 +106,13 @@ class LoanController extends Controller
         return view('student.ticket', compact('loan'));
     }
 
-    public function checkStatus(Loan $loan)
+    /**
+     * Check the current status of a loan.
+     *
+     * @param Loan $loan
+     * @return JsonResponse
+     */
+    public function checkStatus(Loan $loan): JsonResponse
     {
         if ($loan->user_id !== Auth::id()) {
             abort(403);
@@ -82,12 +121,14 @@ class LoanController extends Controller
         return response()->json(['status' => $loan->status]);
     }
 
-    // --- Koleksi Saya ---
-    public function collection()
+    /**
+     * Display the student's book collection and history.
+     *
+     * @return View
+     */
+    public function collection(): View
     {
         $user = Auth::user();
-        // Menggunakan repository via service kalau strict, tapi disini pakai Eloquent untuk kecepatan
-        // Idealnya: $this->loanService->getUserActiveLoans($user->id);
         
         $activeLoans = $user->loans()
                             ->with('book')

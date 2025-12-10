@@ -1,23 +1,22 @@
 @props([
     'name', 
-    'label' => 'Filter', // Label default (misal: "Semua Role")
-    'options' => [],     // Format: [['value' => 'val', 'label' => 'Label', 'color' => 'color']]
-    'selected' => request($name) // Nilai yang terpilih saat ini
+    'label' => 'Filter', 
+    'options' => [], 
+    'selected' => request($name) 
 ])
 
 @php
-    // Cari label dari item yang sedang dipilih untuk ditampilkan di tombol utama
     $currentOption = collect($options)->firstWhere('value', $selected);
-    $currentLabel = $currentOption['label'] ?? $label;
+    $currentLabel = $currcomentOption['label'] ?? $label;
 @endphp
 
 <div x-data="{ 
         open: false, 
-        value: '{{ $selected }}',
+        value: '{{ $selected }}', 
         label: '{{ $currentLabel }}'
     }" 
-    class="relative">
-    
+    class="relative"
+>
     <input type="hidden" name="{{ $name }}" :value="value">
 
     <button type="button" @click="open = !open" @click.outside="open = false"
@@ -40,7 +39,7 @@
         
         <div class="p-1">
             <button type="button" 
-                @click="value = ''; label = '{{ $label }}'; open = false; $el.closest('form').submit()"
+                @click="value = ''; label = '{{ $label }}'; open = false; $nextTick(() => $el.closest('form').submit())"
                 class="w-full text-left flex items-center justify-between px-3 py-2 text-sm rounded-lg hover:bg-slate-50 transition group"
                 :class="value === '' ? 'bg-slate-50 text-polsri-primary font-semibold' : 'text-slate-700'">
                 <span>{{ $label }}</span>
@@ -51,13 +50,12 @@
 
             @foreach($options as $option)
                 <button type="button" 
-                    @click="value = '{{ $option['value'] }}'; label = '{{ $option['label'] }}'; open = false; $el.closest('form').submit()"
+                    @click="value = '{{ $option['value'] }}'; label = '{{ $option['label'] }}'; open = false; $nextTick(() => $el.closest('form').submit())"
                     class="w-full text-left flex items-center justify-between px-3 py-2 text-sm rounded-lg hover:bg-slate-50 transition group"
                     :class="value === '{{ $option['value'] }}' ? 'bg-slate-50 text-polsri-primary font-semibold' : 'text-slate-700'">
                     
                     <div class="flex items-center gap-2">
                         @if(isset($option['color']))
-                            {{-- Dot warna jika ada --}}
                             <span class="w-2 h-2 rounded-full bg-{{ $option['color'] }}-500"></span>
                         @endif
                         <span>{{ $option['label'] }}</span>

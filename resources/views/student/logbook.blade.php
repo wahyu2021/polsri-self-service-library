@@ -1,160 +1,70 @@
 <x-layouts.app title="Smart Logbook">
-    <x-slot name="header">
-        Smart Logbook
-    </x-slot>
 
-    <div class="max-w-md mx-auto min-h-screen flex flex-col bg-black">
+    <div class="flex flex-col h-[calc(100vh-6.5rem)] lg:h-[calc(100vh-5rem)] bg-black">
         
-        <!-- Camera Viewfinder UI -->
-        <div class="relative flex-1 bg-gray-900 flex items-center justify-center overflow-hidden">
+        <div class="relative flex-1 bg-gray-900 overflow-hidden group">
             
-            <!-- Simulasi Kamera (Placeholder Video) -->
-            <div class="absolute inset-0 opacity-40">
-                <div class="w-full h-full bg-[url('https://images.unsplash.com/photo-1555421689-d68471e189f2?auto=format&fit=crop&q=80')] bg-cover bg-center filter blur-sm"></div>
+            <div id="reader" class="w-full h-full object-cover"></div>
+
+            <div id="camera-fallback" class="absolute inset-0 flex items-center justify-center text-white/30 text-sm">
+                Memuat Kamera...
             </div>
 
-            <!-- Overlay Interface -->
-            <div class="absolute inset-0 z-10 flex flex-col items-center pt-20 pb-32 px-6">
-                
-                <!-- GPS Status Indicator -->
-                <div id="gps-indicator" class="bg-black/50 backdrop-blur-md text-white/80 px-4 py-2 rounded-full flex items-center gap-2 mb-8 border border-white/10 transition-all duration-300">
-                    <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse" id="gps-dot"></span>
-                    <span class="text-xs font-medium tracking-wide" id="gps-text">Mencari Lokasi...</span>
+            <div class="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
+                <div id="gps-indicator" class="absolute top-8 bg-black/40 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full flex items-center gap-2 pointer-events-auto transition-all">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse" id="gps-dot"></span>
+                    <span class="text-xs font-medium text-white/90" id="gps-text">Mencari Lokasi...</span>
                 </div>
 
-                <!-- Scanner Frame -->
-                <div class="relative w-64 h-64 border-2 border-white/30 rounded-3xl">
-                    <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-blue-500 rounded-tl-2xl -mt-1 -ml-1"></div>
-                    <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-blue-500 rounded-tr-2xl -mt-1 -mr-1"></div>
-                    <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-blue-500 rounded-bl-2xl -mb-1 -ml-1"></div>
-                    <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-blue-500 rounded-br-2xl -mb-1 -mr-1"></div>
-                    
-                    <!-- Scanning Line Animation -->
-                    <div class="absolute top-0 left-0 w-full h-1 bg-blue-500/50 shadow-[0_0_10px_rgba(59,130,246,0.5)] animate-[scan_2s_ease-in-out_infinite]"></div>
+                <div class="w-64 h-64 border-2 border-white/20 rounded-3xl relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-polsri-primary rounded-tl-xl -mt-1 -ml-1"></div>
+                    <div class="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-polsri-primary rounded-tr-xl -mt-1 -mr-1"></div>
+                    <div class="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-polsri-primary rounded-bl-xl -mb-1 -ml-1"></div>
+                    <div class="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-polsri-primary rounded-br-xl -mb-1 -mr-1"></div>
+                    <div class="absolute top-0 w-full h-1 bg-gradient-to-r from-transparent via-polsri-primary to-transparent animate-[scan_2s_ease-in-out_infinite] shadow-[0_0_15px_rgba(249,115,22,0.6)]"></div>
                 </div>
 
-                <p class="text-white/60 text-sm mt-8 text-center max-w-xs">
-                    Arahkan kamera ke QR Code di pintu masuk perpustakaan.
-                </p>
+                <p class="mt-6 text-white/70 text-sm font-medium bg-black/20 px-4 py-1 rounded-lg backdrop-blur-sm">Arahkan ke QR Pintu Masuk</p>
+            </div>
+        </div>
 
+        <div class="bg-white px-6 py-6 rounded-t-3xl -mt-6 z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-bold text-slate-800 text-lg">Scan Masuk</h3>
+                <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded border border-slate-200">Wajib GPS Aktif</span>
             </div>
 
-            <!-- Controls (Bottom Sheet) -->
-            <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-[2rem] p-8 z-20">
-                <div class="flex flex-col gap-4">
-                    
-                    <!-- Form Hidden -->
-                    <form id="checkin-form" class="hidden">
-                        @csrf
-                        <input type="hidden" name="qr_code" id="input_qr_code">
-                        <input type="hidden" name="latitude" id="input_latitude">
-                        <input type="hidden" name="longitude" id="input_longitude">
-                    </form>
+            <form id="checkin-form" class="hidden">
+                @csrf
+                <input type="hidden" name="qr_code" id="input_qr_code">
+                <input type="hidden" name="latitude" id="input_latitude">
+                <input type="hidden" name="longitude" id="input_longitude">
+            </form>
 
-                    <!-- Status Message -->
-                    <div id="status-display" class="hidden p-4 rounded-xl text-center mb-2"></div>
+            <div id="status-display" class="hidden mb-4 p-3 rounded-xl text-center text-sm font-bold"></div>
 
-                    <!-- Simulation Buttons (Development Only) -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <button type="button" onclick="simulateScan()" class="bg-slate-900 text-white py-3 rounded-xl font-bold active:scale-95 transition">
-                            📸 Simulasi Scan
-                        </button>
-                        <button type="button" onclick="getCurrentLocation()" class="bg-slate-100 text-slate-700 py-3 rounded-xl font-bold active:scale-95 transition">
-                            📍 Set Lokasi Saya
-                        </button>
-                    </div>
-
-                    <a href="{{ route('student.dashboard') }}" class="text-center text-slate-400 text-sm font-medium mt-2">Kembali ke Dashboard</a>
+            <div id="feedback-overlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+                <div class="text-center transform scale-50 transition-transform duration-300" id="feedback-content">
+                    <div id="feedback-icon" class="text-9xl mb-4 animate-bounce"></div>
+                    <h2 id="feedback-title" class="text-3xl font-bold text-white mb-2"></h2>
+                    <p id="feedback-message" class="text-white/80 text-lg"></p>
                 </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3">
+                <button onclick="getCurrentLocation()" class="py-3 px-4 rounded-xl bg-slate-50 text-slate-600 font-bold text-sm hover:bg-slate-100 active:scale-95 transition flex items-center justify-center gap-2">
+                    <span id="gps-icon">📍</span> <span id="gps-btn-text">Perbarui Lokasi GPS</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <style>
-        @keyframes scan {
-            0%, 100% { top: 0%; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-    </style>
-
     <script>
-        const gpsDot = document.getElementById('gps-dot');
-        const gpsText = document.getElementById('gps-text');
-        const statusDisplay = document.getElementById('status-display');
-        let currentLat = null;
-        let currentLng = null;
-
-        // Auto start GPS
-        document.addEventListener('DOMContentLoaded', () => {
-            getCurrentLocation();
-        });
-
-        function getCurrentLocation() {
-            gpsText.innerText = "Mencari satelit...";
-            gpsDot.className = "w-2 h-2 rounded-full bg-yellow-400 animate-pulse";
-
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        currentLat = position.coords.latitude;
-                        currentLng = position.coords.longitude;
-                        
-                        gpsText.innerText = "Lokasi Akurat (±" + Math.round(position.coords.accuracy) + "m)";
-                        gpsDot.className = "w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]";
-
-                        // Update hidden inputs
-                        document.getElementById('input_latitude').value = currentLat;
-                        document.getElementById('input_longitude').value = currentLng;
-                    },
-                    (error) => {
-                        gpsText.innerText = "Gagal mengambil lokasi";
-                        gpsDot.className = "w-2 h-2 rounded-full bg-rose-500";
-                    }
-                );
-            }
-        }
-
-        async function simulateScan() {
-            if (!currentLat) {
-                alert("Tunggu lokasi terkunci dulu!");
-                return;
-            }
-
-            // Simulasi QR Value
-            document.getElementById('input_qr_code').value = 'LIB-POLSRI-ACCESS';
-            
-            // Submit
-            const form = document.getElementById('checkin-form');
-            const formData = new FormData(form);
-
-            statusDisplay.classList.remove('hidden');
-            statusDisplay.className = "p-4 rounded-xl text-center mb-2 bg-slate-100 text-slate-500";
-            statusDisplay.innerHTML = "Memproses data...";
-
-            try {
-                const response = await fetch("{{ route('student.logbook.store') }}", {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Accept': 'application/json'
-                    },
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    statusDisplay.className = "p-4 rounded-xl text-center mb-2 bg-emerald-100 text-emerald-700 font-bold border border-emerald-200";
-                    statusDisplay.innerHTML = "✅ " + result.message;
-                } else {
-                    statusDisplay.className = "p-4 rounded-xl text-center mb-2 bg-rose-100 text-rose-700 font-bold border border-rose-200";
-                    statusDisplay.innerHTML = "❌ " + result.message;
-                }
-            } catch (error) {
-                statusDisplay.innerText = "Error Sistem";
-            }
-        }
+        window.AppConfig = {
+            checkInUrl: "{{ route('student.logbook.store') }}",
+            dashboardUrl: "{{ route('student.dashboard') }}",
+            csrfToken: "{{ csrf_token() }}"
+        };
     </script>
+    @vite(['resources/js/student/logbook.js'])
 </x-layouts.app>

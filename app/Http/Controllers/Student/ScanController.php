@@ -4,31 +4,47 @@ namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
 use App\Services\ScanService;
-use Illuminate\Http\Request;
+use App\Http\Requests\Student\StoreLogbookRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
+/**
+ * Handles student attendance and logbook scanning operations.
+ */
 class ScanController extends Controller
 {
+    /**
+     * @var ScanService
+     */
     protected ScanService $scanService;
 
+    /**
+     * @param ScanService $scanService
+     */
     public function __construct(ScanService $scanService)
     {
         $this->scanService = $scanService;
     }
 
-    public function index()
+    /**
+     * Display the logbook scanning interface.
+     *
+     * @return View
+     */
+    public function index(): View
     {
-        return view('student.scan');
+        return view('student.logbook');
     }
 
-    public function store(Request $request)
+    /**
+     * Process the student check-in request.
+     *
+     * @param StoreLogbookRequest $request
+     * @return JsonResponse
+     */
+    public function store(StoreLogbookRequest $request): JsonResponse
     {
-        $request->validate([
-            'qr_code' => 'required|string',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
-        ]);
-
         try {
             $this->scanService->processCheckIn(
                 Auth::user(),

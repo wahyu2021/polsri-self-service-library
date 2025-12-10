@@ -3,22 +3,18 @@
         
         <div class="w-full max-w-sm bg-white text-slate-900 rounded-3xl overflow-hidden shadow-2xl relative">
             
-            <!-- Ticket Header -->
             <div class="bg-blue-600 p-6 text-center relative overflow-hidden">
                 <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjIiIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIi8+PC9zdmc+')] opacity-30"></div>
                 <h1 class="text-white font-bold text-xl tracking-widest uppercase">Exit Pass</h1>
                 <p class="text-blue-100 text-xs mt-1">Self-Service Library Polsri</p>
             </div>
 
-            <!-- Ticket Body -->
             <div class="p-8 flex flex-col items-center">
                 
-                <!-- Status Badge -->
                 <div id="status-badge" class="mb-6 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-yellow-100 text-yellow-700 animate-pulse border border-yellow-200">
                     Menunggu Verifikasi
                 </div>
 
-                <!-- QR Code -->
                 <div class="p-4 bg-white border-4 border-slate-900 rounded-2xl shadow-sm mb-6">
                     <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data={{ $loan->transaction_code }}" 
                          alt="QR Code Transaksi" 
@@ -43,7 +39,6 @@
 
             </div>
 
-            <!-- Warning Footer -->
             <div class="bg-slate-50 p-4 text-center border-t border-slate-100">
                 <p id="instruction-text" class="text-xs text-slate-500">
                     Tunjukkan QR Code ini kepada petugas di pintu keluar. <br>
@@ -54,7 +49,6 @@
                 </div>
             </div>
 
-            <!-- Decorative Cutouts -->
             <div class="absolute top-[88px] -left-3 w-6 h-6 bg-slate-900 rounded-full"></div>
             <div class="absolute top-[88px] -right-3 w-6 h-6 bg-slate-900 rounded-full"></div>
 
@@ -62,12 +56,11 @@
     </div>
 
     <script>
-        // Simple polling to check status
         const loanId = "{{ $loan->id }}";
         const statusBadge = document.getElementById('status-badge');
         const instructionText = document.getElementById('instruction-text');
         
-        let checkInterval = setInterval(checkStatus, 3000); // Check every 3 seconds
+        let checkInterval = setInterval(checkStatus, 3000);
 
         async function checkStatus() {
             try {
@@ -75,7 +68,6 @@
                 const data = await response.json();
 
                 if (data.status === 'borrowed') {
-                    // Status changed to BORROWED (Approved)
                     clearInterval(checkInterval);
                     updateUIApproved();
                 }
@@ -91,7 +83,6 @@
             instructionText.innerHTML = "Buku berhasil dipinjam.<br>Terima kasih telah membaca!";
             instructionText.classList.add("text-emerald-600", "font-medium");
             
-            // Optional: Confetti effect or vibration
             if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
         }
     </script>

@@ -106,7 +106,18 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
-                                @if ($loan->status == 'borrowed')
+                                @if ($loan->status == 'pending_validation')
+                                    <form action="{{ route('admin.loans.approve', $loan) }}" method="POST"
+                                        onsubmit="return confirm('Setujui peminjaman ini? Pastikan buku fisik sesuai dengan data.');">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit"
+                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition shadow-sm shadow-emerald-200">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                                            Setujui Keluar
+                                        </button>
+                                    </form>
+                                @elseif ($loan->status == 'borrowed')
                                     <form action="{{ route('admin.loans.return', $loan) }}" method="POST"
                                         onsubmit="return confirm('Proses pengembalian buku ini? Denda akan dihitung otomatis jika ada.');">
                                         @csrf

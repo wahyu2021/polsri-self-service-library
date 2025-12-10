@@ -16,6 +16,11 @@ interface LoanRepositoryInterface
     // Student specific
     public function getActiveLoansByUserId(int $userId): Collection;
     public function getHistoryLoansByUserId(int $userId, int $limit = 5): Collection;
+    
+    // Notifications (Real Implementation)
+    public function getOverdueLoansByUserId(int $userId): Collection;
+    public function getDueSoonLoansByUserId(int $userId, int $days = 1): Collection;
+    public function getUnpaidFinesByUserId(int $userId): Collection;
 
     // Reporting & Analytics
     public function getFinesByDateRange(string $startDate, string $endDate); // Returns Builder/Paginator

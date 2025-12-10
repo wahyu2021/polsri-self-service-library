@@ -9,37 +9,56 @@ use App\Enums\LoanStatus;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use App\Models\Setting;
-
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * Service for managing book loans, returns, and self-service transactions.
+ */
 class LoanService
 {
+    /**
+     * @var LoanRepositoryInterface
+     */
     protected LoanRepositoryInterface $loanRepository;
 
+    /**
+     * @param LoanRepositoryInterface $loanRepository
+     */
     public function __construct(LoanRepositoryInterface $loanRepository)
     {
         $this->loanRepository = $loanRepository;
     }
 
-    public function getAllLoans(array $filters)
+    /**
+     * Get all loans with pagination and filters.
+     *
+     * @param array $filters
+     * @return LengthAwarePaginator
+     */
+    public function getAllLoans(array $filters): LengthAwarePaginator
     {
         return $this->loanRepository->getAllPaginated($filters);
     }
 
-    public function createLoan(array $data)
+    /**
+     * Create a new loan transaction (Admin).
+     *
+     * @param array $data
+     * @return Loan
+     * @throws \Exception If stock is insufficient.
+     */
+    public function createLoan(array $data): Loan
     {
         return DB::transaction(function () use ($data) {
-            // Business Logic: Decrement Stock
             $book = Book::findOrFail($data['book_id']);
             
-            // Double check stock
             if ($book->stock < 1) {
                 throw new \Exception('Stok buku habis.');
             }
             
             $book->decrement('stock');
 
-            // Prepare Data
             $data['transaction_code'] = 'TRX-' . strtoupper(Str::random(8));
             $data['status'] = LoanStatus::BORROWED;
             $data['borrow_date'] = Carbon::now();
@@ -49,9 +68,16 @@ class LoanService
         });
     }
 
-    public function createSelfServiceLoan(int $userId, string $isbn)
+    /**
+     * Create a self-service loan via QR scan (Student).
+     *
+     * @param int $userId
+     * @param string $isbn
+     * @return Loan
+     * @throws \Exception If book not found, out of stock, or user already has active loan for the book.
+     */
+    public function createSelfServiceLoan(int $userId, string $isbn): Loan
     {
-        // 1. Cari Buku by ISBN (atau kode buku lokal)
         $book = Book::where('isbn', $isbn)->first();
         
         if (!$book) {
@@ -62,7 +88,6 @@ class LoanService
             throw new \Exception('Stok buku saat ini sedang kosong.');
         }
 
-        // 2. Cek apakah user sudah meminjam buku yang sama dan belum kembali
         $existingLoan = Loan::where('user_id', $userId)
                             ->where('book_id', $book->id)
                             ->whereIn('status', [LoanStatus::BORROWED, LoanStatus::PENDING_VALIDATION])
@@ -72,24 +97,28 @@ class LoanService
             throw new \Exception('Anda sedang meminjam buku ini.');
         }
 
-        // 3. Buat Transaksi Pending
         return DB::transaction(function () use ($userId, $book) {
-            // Stok dikurangi langsung agar tidak di-checkout orang lain
             $book->decrement('stock');
 
             return $this->loanRepository->create([
                 'user_id' => $userId,
                 'book_id' => $book->id,
                 'transaction_code' => 'SELF-' . date('ymdHis') . '-' . rand(100, 999),
-                'loan_date' => Carbon::now(), // Gunakan loan_date agar konsisten dengan createLoan
                 'borrow_date' => Carbon::now(),
                 'due_date' => Carbon::now()->addDays(7),
-                'status' => LoanStatus::PENDING_VALIDATION, // Butuh scan admin di pintu keluar
+                'status' => LoanStatus::PENDING_VALIDATION,
             ]);
         });
     }
 
-    public function returnBook(Loan $loan)
+    /**
+     * Process a book return.
+     *
+     * @param Loan $loan
+     * @return array Contains the updated loan and calculated fine amount.
+     * @throws \Exception If book is already returned.
+     */
+    public function returnBook(Loan $loan): array
     {
         return DB::transaction(function () use ($loan) {
             if ($loan->status === LoanStatus::RETURNED) {
@@ -99,7 +128,6 @@ class LoanService
             $returnDate = Carbon::now();
             $fineAmount = 0;
             
-            // Get Fine Rate from Settings (or default)
             $finePerDay = Setting::where('key', 'fine_per_day')->value('value') ?? 1000;
 
             if ($returnDate->greaterThan($loan->due_date)) {
@@ -107,14 +135,12 @@ class LoanService
                 $fineAmount = $daysLate * $finePerDay;
             }
 
-            // Update Loan
             $this->loanRepository->update($loan, [
                 'status' => LoanStatus::RETURNED,
                 'return_date' => $returnDate,
                 'fine_amount' => $fineAmount,
             ]);
 
-            // Increment Stock
             $loan->book->increment('stock');
 
             return [

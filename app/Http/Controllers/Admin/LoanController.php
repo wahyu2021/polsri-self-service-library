@@ -51,6 +51,24 @@ class LoanController extends Controller
         }
     }
 
+    public function approve(Loan $loan)
+    {
+        try {
+            if ($loan->status !== \App\Enums\LoanStatus::PENDING_VALIDATION) {
+                throw new \Exception('Hanya peminjaman status pending yang bisa disetujui.');
+            }
+
+            // Update status menjadi BORROWED (Aktif)
+            $loan->update([
+                'status' => \App\Enums\LoanStatus::BORROWED
+            ]);
+
+            return back()->with('success', 'Peminjaman mandiri berhasil diverifikasi. Mahasiswa diizinkan keluar.');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
     public function returnBook(Loan $loan)
     {
         try {

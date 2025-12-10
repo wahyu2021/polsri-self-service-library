@@ -43,6 +43,12 @@ Route::middleware('auth')->group(function () {
 
         // Profile
         Route::get('/profile', [\App\Http\Controllers\Student\ProfileController::class, 'index'])->name('profile.index');
+        Route::put('/profile', [\App\Http\Controllers\Student\ProfileController::class, 'update'])->name('profile.update');
+
+        // Notifications
+        Route::get('/notifications', [\App\Http\Controllers\Student\NotificationController::class, 'index'])->name('notifications.index');
+        Route::get('/notifications/{id}/read', [\App\Http\Controllers\Student\NotificationController::class, 'markAsRead'])->name('notifications.read');
+        Route::post('/notifications/read-all', [\App\Http\Controllers\Student\NotificationController::class, 'markAllRead'])->name('notifications.readAll');
     });
 
     // Admin Routes
@@ -55,6 +61,7 @@ Route::middleware('auth')->group(function () {
         // Circulation Management
         Route::resource('loans', \App\Http\Controllers\Admin\LoanController::class)->only(['index', 'create', 'store']);
         Route::put('loans/{loan}/return', [\App\Http\Controllers\Admin\LoanController::class, 'returnBook'])->name('loans.return');
+        Route::put('loans/{loan}/approve', [\App\Http\Controllers\Admin\LoanController::class, 'approve'])->name('loans.approve');
 
         // Settings
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');

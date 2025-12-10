@@ -72,8 +72,38 @@ class LoanRepository implements LoanRepositoryInterface
         return Loan::with('book')
                    ->where('user_id', $userId)
                    ->where('status', LoanStatus::RETURNED)
-                   ->latest()
+                   ->latest('return_date')
                    ->limit($limit)
+                   ->get();
+    }
+
+    public function getOverdueLoansByUserId(int $userId): Collection
+    {
+        return Loan::with('book')
+                   ->where('user_id', $userId)
+                   ->where('status', LoanStatus::BORROWED)
+                   ->where('due_date', '<', Carbon::now())
+                   ->get();
+    }
+
+    public function getDueSoonLoansByUserId(int $userId, int $days = 1): Collection
+    {
+        $targetDate = Carbon::now()->addDays($days);
+        
+        return Loan::with('book')
+                   ->where('user_id', $userId)
+                   ->where('status', LoanStatus::BORROWED)
+                   ->whereBetween('due_date', [Carbon::now(), $targetDate])
+                   ->get();
+    }
+
+    public function getUnpaidFinesByUserId(int $userId): Collection
+    {
+        return Loan::with('book')
+                   ->where('user_id', $userId)
+                   ->where('status', LoanStatus::RETURNED)
+                   ->where('fine_amount', '>', 0)
+                   ->where('is_fine_paid', false)
                    ->get();
     }
 

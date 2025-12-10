@@ -6,6 +6,9 @@ use App\Interfaces\UserRepositoryInterface;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
+
 class UserService
 {
     protected UserRepositoryInterface $userRepository;
@@ -13,6 +16,19 @@ class UserService
     public function __construct(UserRepositoryInterface $userRepository)
     {
         $this->userRepository = $userRepository;
+    }
+
+    public function updateAvatar(User $user, UploadedFile $file)
+    {
+        // Delete old avatar
+        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        // Store new avatar
+        $path = $file->store('avatars', 'public');
+
+        return $this->userRepository->update($user, ['avatar' => $path]);
     }
 
     public function getAllUsers(array $filters)

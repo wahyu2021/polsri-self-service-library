@@ -1,0 +1,21 @@
+feat: Implement comprehensive notification system and loan management improvements
+
+This commit introduces a robust notification system and enhances various aspects of loan management and student-facing features.
+
+- Notification System:
+  - Added new notification types (e.g., fine unpaid, loan due soon, overdue).
+  - Implemented `NotificationController` for student notification management.
+  - Created `notifications_table` migration and related UI components.
+
+- Loan Management Improvements:
+  - Added `is_fine_paid` column to `loans_table` for better fine tracking.
+  - Updated `LoanController`, `LoanRepository`, and `LoanService` to support new loan features and notification triggers.
+
+- Student Module Enhancements:
+  - Modified `DashboardController`, `LoanController`, `ProfileController`, and `ScanController` to integrate new features and notification displays.
+  - Introduced new student views and components for notifications and updated existing ones.
+
+- General Refinements:
+  - Updated application service providers and user models to support new functionalities.
+  - Adjusted build configurations (`vite.config.js`, `package.json`).
+  - Cleaned up `.gitignore` and added `.vercelignore`, `vercel.json` for deployment.
