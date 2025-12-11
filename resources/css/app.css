@@ -41,3 +41,61 @@
     @apply bg-white rounded-xl shadow-lg border border-gray-100 p-6;
 }
 
+/* Print Styles */
+@media print {
+    /* Hide Navigation & UI Controls */
+    aside, 
+    header, 
+    form, 
+    button, 
+    .no-print {
+        display: none !important;
+    }
+
+    /* Reset Layout for Paper */
+    body, html {
+        height: auto !important;
+        overflow: visible !important;
+        background: white !important;
+    }
+
+    main {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        overflow: visible !important;
+    }
+
+    /* Simplify Containers */
+    .card, .bg-white {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* Typography Adjustments */
+    h1, h2, h3 {
+        color: black !important;
+    }
+    
+    p, span, td, th {
+        color: #1f2937 !important; /* Slate-800 */
+    }
+
+    /* Chart Handling */
+    .apexcharts-canvas {
+        margin: 0 auto;
+    }
+
+    /* Ensure table fits */
+    table {
+        width: 100% !important;
+        font-size: 10pt;
+    }
+    
+    /* Force page breaks if needed */
+    .page-break {
+        page-break-before: always;
+    }
+}

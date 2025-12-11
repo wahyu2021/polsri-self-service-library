@@ -68,11 +68,13 @@ Route::middleware('auth')->group(function () {
         // Settings
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::put('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
+        Route::get('/settings/print-qr', [\App\Http\Controllers\Admin\SettingController::class, 'printQr'])->name('settings.print-qr');
 
         // User Management
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
 
         // Reports
         Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/export', [\App\Http\Controllers\Admin\ReportController::class, 'export'])->name('reports.export');
     });
 });

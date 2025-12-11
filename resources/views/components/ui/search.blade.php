@@ -67,10 +67,8 @@
             },
 
             selectSuggestion(item) {
-                let newValue = '';
-                if (item.search_term) newValue = item.search_term;
-                else if (item.title) newValue = item.title;
-                else if (item.name) newValue = item.name;
+                // Backend now guarantees search_term is present for all resources
+                const newValue = item.search_term || item.title || item.name || '';
                 
                 // 1. Set values immediately
                 this.query = newValue;
@@ -84,7 +82,6 @@
             async performSearch() {
                 const container = document.getElementById(targetId);
                 if (!container) {
-                    console.error('Search target container not found:', targetId);
                     this.$refs.searchInput.form.submit(); // Fallback
                     return;
                 }
@@ -122,7 +119,7 @@
                         window.location.href = url.toString(); 
                     }
                 } catch (e) {
-                    console.error('AJAX search failed:', e);
+                    // Fail silently or handle UI error state
                 } finally {
                     container.style.opacity = '1';
                     container.style.pointerEvents = 'auto';

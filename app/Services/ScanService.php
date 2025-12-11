@@ -24,7 +24,6 @@ class ScanService
     const DEFAULT_LAT = -2.9850;
     const DEFAULT_LNG = 104.7320;
     const MAX_DISTANCE_METERS = 50; 
-    const VALID_QR_CODE = 'LIB-POLSRI-ACCESS';
 
     /**
      * @param LogbookRepositoryInterface $logbookRepository
@@ -46,17 +45,34 @@ class ScanService
      */
     public function processCheckIn(User $user, string $qrCode, float $lat, float $lng): Model
     {
-        if ($qrCode !== self::VALID_QR_CODE) {
-            throw new \Exception('QR Code tidak valid.');
+        // 1. Parse QR Code format: PASSWORD|LAT|LNG
+        $parts = explode('|', $qrCode);
+        if (count($parts) !== 3) {
+            throw new \Exception('Format QR Code tidak valid.');
         }
 
+        [$qrPassword, $qrLat, $qrLng] = $parts;
+
+        // 2. Validate Password
+        if ($qrPassword !== env('LOGBOOK_QR_SECRET')) {
+            throw new \Exception('QR Code tidak dikenali atau password salah.');
+        }
+
+        // 3. Validate QR Location against System Settings (Ensure QR is up-to-date)
         $libraryLat = (float) Setting::where('key', 'library_lat')->value('value') ?? self::DEFAULT_LAT;
         $libraryLng = (float) Setting::where('key', 'library_lng')->value('value') ?? self::DEFAULT_LNG;
 
+        // Allow small floating point difference (epsilon)
+        if (abs($qrLat - $libraryLat) > 0.0001 || abs($qrLng - $libraryLng) > 0.0001) {
+            throw new \Exception('QR Code kadaluarsa. Lokasi perpustakaan telah berubah.');
+        }
+
+        // 4. Validate User Distance (GPS)
         $distance = $this->calculateDistance($lat, $lng, $libraryLat, $libraryLng);
+        $radius = (int) Setting::where('key', 'validation_radius')->value('value') ?? self::MAX_DISTANCE_METERS;
         
-        if ($distance > self::MAX_DISTANCE_METERS) {
-             throw new \Exception("Anda berada di luar jangkauan (Jarak: " . round($distance) . "m). Max: " . self::MAX_DISTANCE_METERS . "m.");
+        if ($distance > $radius) {
+             throw new \Exception("Anda berada di luar jangkauan (Jarak: " . round($distance) . "m). Max: " . $radius . "m.");
         }
 
         return $this->logbookRepository->create([

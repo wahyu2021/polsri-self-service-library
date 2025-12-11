@@ -70,4 +70,16 @@ class ReportService
             'endDate'
         );
     }
+    
+    public function getExportData(array $filters)
+    {
+        $startDate = $filters['start_date'] ?? Carbon::now()->startOfMonth()->format('Y-m-d');
+        $endDate = $filters['end_date'] ?? Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        // Query Base via Repository
+        $queryBuilder = $this->loanRepository->getFinesByDateRange($startDate, $endDate);
+        
+        // Get all data for export
+        return $queryBuilder->latest('return_date')->get();
+    }
 }
