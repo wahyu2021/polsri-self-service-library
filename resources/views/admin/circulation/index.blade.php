@@ -15,7 +15,7 @@
                     [
                         'value' => 'returned',
                         'label' => 'Kembali',
-                        'color' => 'slate',
+                        'color' => 'blue',
                     ],
                 ];
             @endphp
