@@ -32,14 +32,6 @@
         </a>
     </x-ui.header>
 
-    @if (session('success'))
-        <x-ui.alert type="success" :message="session('success')" />
-    @endif
-
-    @if (session('error'))
-        <x-ui.alert type="error" :message="session('error')" />
-    @endif
-
     <x-ui.card>
         <div id="search-results-table">
             @include('admin.circulation._table')

@@ -52,6 +52,37 @@
                             @error('author') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="publisher" class="block text-sm font-semibold text-slate-700 mb-2">Penerbit</label>
+                                <input type="text" name="publisher" id="publisher" value="{{ old('publisher') }}" 
+                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition" 
+                                    placeholder="Nama Penerbit">
+                                @error('publisher') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label for="publication_year" class="block text-sm font-semibold text-slate-700 mb-2">Tahun Terbit</label>
+                                <input type="number" name="publication_year" id="publication_year" value="{{ old('publication_year', date('Y')) }}" 
+                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition" 
+                                    placeholder="2024">
+                                @error('publication_year') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="category" class="block text-sm font-semibold text-slate-700 mb-2">Kategori</label>
+                            <select name="category" id="category" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition bg-white">
+                                <option value="Teknologi Informasi">Teknologi Informasi</option>
+                                <option value="Ekonomi & Bisnis">Ekonomi & Bisnis</option>
+                                <option value="Teknik Mesin">Teknik Mesin</option>
+                                <option value="Teknik Elektro">Teknik Elektro</option>
+                                <option value="Bahasa & Sastra">Bahasa & Sastra</option>
+                                <option value="Sains Dasar">Sains Dasar</option>
+                                <option value="Umum">Umum</option>
+                            </select>
+                            @error('category') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
                         <div>
                             <label for="stock" class="block text-sm font-semibold text-slate-700 mb-2">Stok Tersedia</label>
                             <div class="flex items-center gap-4">
@@ -63,6 +94,12 @@
                             </div>
                             @error('stock') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
+
+                        <div>
+                            <label for="synopsis" class="block text-sm font-semibold text-slate-700 mb-2">Sinopsis / Ringkasan</label>
+                            <textarea name="synopsis" id="synopsis" rows="4" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition text-sm" placeholder="Deskripsi singkat buku...">{{ old('synopsis') }}</textarea>
+                            @error('synopsis') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
                     </div>
 
                     <!-- Right Column: Cover Upload -->
@@ -70,7 +107,7 @@
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Cover Buku</label>
                         
                         <div class="relative group cursor-pointer">
-                            <input type="file" name="cover" id="cover" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer" onchange="previewImage(this)">
+                            <input type="file" name="cover_image" id="cover_image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer" onchange="previewImage(this)">
                             
                             <div id="image-preview" class="w-full aspect-[2/3] bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400 group-hover:bg-slate-100 group-hover:border-slate-400 transition relative overflow-hidden">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
@@ -80,7 +117,7 @@
                                 <span class="text-xs mt-1 opacity-70">JPG, PNG max 2MB</span>
                             </div>
                         </div>
-                        @error('cover') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        @error('cover_image') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                 </div>

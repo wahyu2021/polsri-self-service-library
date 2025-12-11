@@ -13,9 +13,18 @@ class Book extends Model
         'isbn',
         'title',
         'author',
+        'publisher',
+        'publication_year',
+        'category_id',
         'stock',
-        'cover',
+        'synopsis',
+        'cover_image',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 
     public function loans()
     {

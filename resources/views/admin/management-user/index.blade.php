@@ -34,14 +34,6 @@
         </a>
     </x-ui.header>
 
-    @if (session('success'))
-        <x-ui.alert type="success" :message="session('success')" />
-    @endif
-
-    @if (session('error'))
-        <x-ui.alert type="error" :message="session('error')" />
-    @endif
-
     <!-- Users Table -->
     <x-ui.card>
         <div id="search-results-table">

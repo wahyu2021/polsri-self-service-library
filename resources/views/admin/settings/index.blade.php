@@ -6,10 +6,6 @@
     <div class="max-w-7xl mx-auto">
         <x-ui.header title="Pengaturan Sistem" subtitle="Konfigurasi parameter global aplikasi." />
 
-        @if(session('success'))
-            <x-ui.alert type="success" :message="session('success')" />
-        @endif
-
         <form action="{{ route('admin.settings.update') }}" method="POST" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             @csrf
             @method('PUT')

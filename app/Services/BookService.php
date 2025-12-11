@@ -60,8 +60,8 @@ class BookService
 
     public function createBook(array $data)
     {
-        if (isset($data['cover']) && $data['cover']) {
-            $data['cover'] = $data['cover']->store('covers', 'public');
+        if (isset($data['cover_image']) && $data['cover_image']) {
+            $data['cover_image'] = $data['cover_image']->store('covers', 'public');
         }
 
         return $this->bookRepository->create($data);
@@ -69,12 +69,12 @@ class BookService
 
     public function updateBook(Book $book, array $data)
     {
-        if (isset($data['cover']) && $data['cover']) {
+        if (isset($data['cover_image']) && $data['cover_image']) {
             // Hapus cover lama
-            if ($book->cover) {
-                Storage::disk('public')->delete($book->cover);
+            if ($book->cover_image) {
+                Storage::disk('public')->delete($book->cover_image);
             }
-            $data['cover'] = $data['cover']->store('covers', 'public');
+            $data['cover_image'] = $data['cover_image']->store('covers', 'public');
         }
 
         return $this->bookRepository->update($book, $data);
@@ -82,8 +82,8 @@ class BookService
 
     public function deleteBook(Book $book)
     {
-        if ($book->cover) {
-            Storage::disk('public')->delete($book->cover);
+        if ($book->cover_image) {
+            Storage::disk('public')->delete($book->cover_image);
         }
 
         return $this->bookRepository->delete($book);

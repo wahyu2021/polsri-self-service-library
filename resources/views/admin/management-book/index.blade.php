@@ -3,7 +3,19 @@
     <!-- Header & Actions -->
     <x-ui.header title="Katalog Buku" subtitle="Kelola inventaris dan stok buku perpustakaan.">
         <!-- Search Form -->
-        <form action="{{ route('admin.books.index') }}" method="GET">
+        <form action="{{ route('admin.books.index') }}" method="GET" class="flex gap-3">
+            @php
+                $categoryOptions = $categories->map(function($cat) {
+                    return [
+                        'value' => $cat->id,
+                        'label' => $cat->name,
+                        'color' => 'blue',
+                    ];
+                })->toArray();
+            @endphp
+
+            <x-ui.filter-dropdown name="category_id" label="Semua Kategori" :options="$categoryOptions" />
+
             <x-ui.search name="search" :value="request('search')" placeholder="Cari judul, ISBN, penulis..." :suggestionsUrl="route('admin.books.index')" />
         </form>
 
@@ -11,10 +23,6 @@
             Tambah Buku
         </x-ui.link-button>
     </x-ui.header>
-
-    @if(session('success'))
-        <x-ui.alert type="success" :message="session('success')" />
-    @endif
 
     <!-- Books Table -->
     <x-ui.card>

@@ -37,17 +37,19 @@ class BookController extends Controller
         }
 
         $books = $this->bookService->getAllBooks($request->all());
+        $categories = \App\Models\Category::orderBy('name')->get();
 
         if ($request->ajax()) {
             return view('admin.management-book._table', compact('books'));
         }
 
-        return view('admin.management-book.index', compact('books'));
+        return view('admin.management-book.index', compact('books', 'categories'));
     }
 
     public function create()
     {
-        return view('admin.management-book.create');
+        $categories = \App\Models\Category::orderBy('name')->get();
+        return view('admin.management-book.create', compact('categories'));
     }
 
     public function store(StoreBookRequest $request)
@@ -60,7 +62,8 @@ class BookController extends Controller
 
     public function edit(Book $book)
     {
-        return view('admin.management-book.edit', compact('book'));
+        $categories = \App\Models\Category::orderBy('name')->get();
+        return view('admin.management-book.edit', compact('book', 'categories'));
     }
 
     public function update(UpdateBookRequest $request, Book $book)

@@ -123,4 +123,15 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Cron Scheduler Secret
+    |--------------------------------------------------------------------------
+    |
+    | This secret key is used to secure the Vercel Cron Job endpoint.
+    |
+    */
+
+    'cron_secret' => env('CRON_SECRET'),
+
 ];

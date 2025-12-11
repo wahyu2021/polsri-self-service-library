@@ -19,28 +19,16 @@
 
     <div class="min-h-screen w-full flex flex-col lg:flex-row">
 
-        <div
-            class="hidden lg:flex w-1/2 relative bg-slate-900 text-white flex-col justify-between p-12 xl:p-16 overflow-hidden">
-
-            <!-- Background Effects -->
-            <div class="absolute inset-0 z-0 pointer-events-none">
-                <!-- Main Gradient Base -->
-                <div class="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900 to-[#0B1120]"></div>
-
-                <!-- Brand Color Ambient Glow (Top Right) -->
-                <div
-                    class="absolute top-0 right-0 -translate-y-1/4 translate-x-1/4 w-[600px] h-[600px] bg-polsri-primary/20 rounded-full blur-[120px]">
-                </div>
-
-                <!-- Secondary Glow (Bottom Left) -->
-                <div
-                    class="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px]">
-                </div>
-
-                <!-- Subtle Grid Pattern -->
-                <div
-                    class="absolute inset-0 bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)]">
-                </div>
+        <div class="hidden lg:flex w-1/2 relative flex-col justify-between p-12 xl:p-16 overflow-hidden">
+            
+            <!-- Background Image with Overlay -->
+            <div class="absolute inset-0 z-0">
+                <img src="https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2070&auto=format&fit=crop" 
+                     alt="Library Background" 
+                     class="w-full h-full object-cover">
+                <!-- Gradient Overlay for Readability -->
+                <div class="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/60 mix-blend-multiply"></div>
+                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-slate-900/40 to-slate-900/90"></div>
             </div>
 
             <!-- Content -->

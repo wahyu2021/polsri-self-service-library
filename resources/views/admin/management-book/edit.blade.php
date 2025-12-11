@@ -53,6 +53,33 @@
                             @error('author') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="publisher" class="block text-sm font-semibold text-slate-700 mb-2">Penerbit</label>
+                                <input type="text" name="publisher" id="publisher" value="{{ old('publisher', $book->publisher) }}" 
+                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition" 
+                                    placeholder="Nama Penerbit">
+                                @error('publisher') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label for="publication_year" class="block text-sm font-semibold text-slate-700 mb-2">Tahun Terbit</label>
+                                <input type="number" name="publication_year" id="publication_year" value="{{ old('publication_year', $book->publication_year) }}" 
+                                    class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition" 
+                                    placeholder="2024">
+                                @error('publication_year') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="category" class="block text-sm font-semibold text-slate-700 mb-2">Kategori</label>
+                            <select name="category" id="category" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition bg-white">
+                                @foreach(['Teknologi Informasi', 'Ekonomi & Bisnis', 'Teknik Mesin', 'Teknik Elektro', 'Bahasa & Sastra', 'Sains Dasar', 'Umum'] as $cat)
+                                    <option value="{{ $cat }}" {{ old('category', $book->category) == $cat ? 'selected' : '' }}>{{ $cat }}</option>
+                                @endforeach
+                            </select>
+                            @error('category') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
                         <div>
                             <label for="stock" class="block text-sm font-semibold text-slate-700 mb-2">Stok Tersedia</label>
                             <div class="flex items-center gap-4">
@@ -64,6 +91,12 @@
                             </div>
                             @error('stock') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
+
+                        <div>
+                            <label for="synopsis" class="block text-sm font-semibold text-slate-700 mb-2">Sinopsis / Ringkasan</label>
+                            <textarea name="synopsis" id="synopsis" rows="4" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition text-sm" placeholder="Deskripsi singkat buku...">{{ old('synopsis', $book->synopsis) }}</textarea>
+                            @error('synopsis') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
                     </div>
 
                     <!-- Right Column: Cover Upload -->
@@ -71,11 +104,11 @@
                         <label class="block text-sm font-semibold text-slate-700 mb-2">Cover Buku</label>
                         
                         <div class="relative group cursor-pointer">
-                            <input type="file" name="cover" id="cover" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer" onchange="previewImage(this)">
+                            <input type="file" name="cover_image" id="cover_image" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer" onchange="previewImage(this)">
                             
-                            <div id="image-preview" class="w-full aspect-[2/3] bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400 group-hover:bg-slate-100 group-hover:border-slate-400 transition relative overflow-hidden {{ $book->cover ? 'border-none' : '' }}">
-                                @if($book->cover)
-                                    <img src="{{ asset('storage/' . $book->cover) }}" class="w-full h-full object-cover">
+                            <div id="image-preview" class="w-full aspect-[2/3] bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400 group-hover:bg-slate-100 group-hover:border-slate-400 transition relative overflow-hidden {{ $book->cover_image ? 'border-none' : '' }}">
+                                @if($book->cover_image)
+                                    <img src="{{ asset('storage/' . $book->cover_image) }}" class="w-full h-full object-cover">
                                 @else
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -84,7 +117,7 @@
                                 @endif
                             </div>
                         </div>
-                        @error('cover') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        @error('cover_image') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                 </div>

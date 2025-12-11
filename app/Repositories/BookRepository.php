@@ -11,7 +11,7 @@ class BookRepository implements BookRepositoryInterface
 {
     public function getAllPaginated(array $filters = [], int $perPage = 10): LengthAwarePaginator
     {
-        $query = Book::query();
+        $query = Book::with('category'); // Eager load category
 
         if (isset($filters['search']) && $filters['search']) {
             $search = $filters['search'];
@@ -20,6 +20,10 @@ class BookRepository implements BookRepositoryInterface
                   ->orWhere('isbn', 'like', "%{$search}%")
                   ->orWhere('author', 'like', "%{$search}%");
             });
+        }
+
+        if (isset($filters['category_id']) && $filters['category_id']) {
+            $query->where('category_id', $filters['category_id']);
         }
 
         return $query->latest()->paginate($perPage);

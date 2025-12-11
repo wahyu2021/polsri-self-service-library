@@ -10,8 +10,10 @@ Route::get('/user', function (Request $request) {
 
 // Vercel Cron Trigger
 Route::get('/run-scheduler', function (Request $request) {
-    // Simple security check using CRON_SECRET env var
-    if ($request->query('token') !== config('app.cron_secret', 'my-secret-token')) {
+    $secret = config('app.cron_secret');
+    
+    // Fail if secret is not configured or token doesn't match
+    if (!$secret || $request->query('token') !== $secret) {
         abort(401, 'Unauthorized');
     }
 

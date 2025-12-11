@@ -29,12 +29,6 @@
                         <input type="file" id="avatar-upload" name="avatar" accept="image/*" onchange="document.getElementById('avatar-form').submit()">
                     </form>
 
-                    @if(session('success'))
-                        <div class="mb-4 p-2 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-lg border border-emerald-200">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-                    
                     @if($errors->any())
                         <div class="mb-4 p-2 bg-rose-50 text-rose-600 text-xs font-bold rounded-lg border border-rose-200">
                             {{ $errors->first('avatar') }}

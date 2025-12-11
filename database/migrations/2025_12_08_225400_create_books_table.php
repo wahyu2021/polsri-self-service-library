@@ -16,8 +16,15 @@ return new class extends Migration
             $table->string('isbn')->unique();
             $table->string('title');
             $table->string('author');
-            $table->integer('stock');
-            $table->string('cover')->nullable();
+            $table->string('publisher')->nullable(); // Added
+            $table->year('publication_year')->nullable(); // Added
+            
+            // Relation to Categories
+            $table->foreignId('category_id')->nullable()->constrained()->nullOnDelete();
+            
+            $table->integer('stock')->default(0);
+            $table->text('synopsis')->nullable(); // Added
+            $table->string('cover_image')->nullable(); // Renamed from 'cover'
             $table->timestamps();
         });
     }

@@ -12,9 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     
-    <!-- Alpine.js for interactivity -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -153,6 +150,37 @@
         </main>
 
     </div>
+
+    <!-- SweetAlert Toast Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @if(session('success'))
+                window.Toast.fire({
+                    icon: 'success',
+                    title: "{{ session('success') }}",
+                    customClass: {
+                        popup: 'shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl border-l-8 border-emerald-500 bg-white pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
+                        title: 'font-bold text-slate-800 text-sm',
+                        timerProgressBar: '!bg-emerald-500'
+                    },
+                    iconColor: '#10b981'
+                });
+            @endif
+
+            @if(session('error'))
+                window.Toast.fire({
+                    icon: 'error',
+                    title: "{{ session('error') }}",
+                    customClass: {
+                        popup: 'shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl border-l-8 border-rose-500 bg-white pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
+                        title: 'font-bold text-slate-800 text-sm',
+                        timerProgressBar: '!bg-rose-500'
+                    },
+                    iconColor: '#f43f5e'
+                });
+            @endif
+        });
+    </script>
 
 </body>
 </html>
