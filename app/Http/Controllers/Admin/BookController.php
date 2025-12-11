@@ -21,7 +21,27 @@ class BookController extends Controller
 
     public function index(Request $request)
     {
+        if ($request->has('q')) {
+            $books = $this->bookService->searchBooks($request->get('q'));
+            
+            $formatted = $books->map(function($book) {
+                return [
+                    'id' => $book->id,
+                    'title' => $book->title,
+                    'isbn' => $book->isbn . ' - ' . $book->author,
+                    'search_term' => $book->title,
+                ];
+            });
+
+            return response()->json(['success' => true, 'data' => $formatted]);
+        }
+
         $books = $this->bookService->getAllBooks($request->all());
+
+        if ($request->ajax()) {
+            return view('admin.management-book._table', compact('books'));
+        }
+
         return view('admin.management-book.index', compact('books'));
     }
 

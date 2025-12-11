@@ -55,4 +55,31 @@ class UserRepository implements UserRepositoryInterface
     {
         return User::find($id);
     }
+
+    public function findStudentByNim(string $nim): ?User
+    {
+        return User::where('nim', $nim)->where('role', UserRole::MAHASISWA)->first();
+    }
+
+    public function searchStudents(string $query, int $limit = 5): Collection
+    {
+        return User::where('role', UserRole::MAHASISWA)
+            ->where(function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('nim', 'like', "%{$query}%");
+            })
+            ->limit($limit)
+            ->get();
+    }
+
+    public function searchUsers(string $query, int $limit = 5): Collection
+    {
+        return User::where(function($q) use ($query) {
+                $q->where('name', 'like', "%{$query}%")
+                  ->orWhere('email', 'like', "%{$query}%")
+                  ->orWhere('nim', 'like', "%{$query}%");
+            })
+            ->limit($limit)
+            ->get();
+    }
 }

@@ -41,6 +41,11 @@ class LoanService
         return $this->loanRepository->getAllPaginated($filters);
     }
 
+    public function searchLoans(string $query)
+    {
+        return $this->loanRepository->searchLoans($query);
+    }
+
     /**
      * Create a new loan transaction (Admin).
      *
@@ -130,8 +135,11 @@ class LoanService
             
             $finePerDay = Setting::where('key', 'fine_per_day')->value('value') ?? 1000;
 
-            if ($returnDate->greaterThan($loan->due_date)) {
-                $daysLate = $returnDate->diffInDays($loan->due_date);
+            $dateDue = $loan->due_date->copy()->startOfDay();
+            $dateReturn = $returnDate->startOfDay();
+
+            if ($dateReturn->greaterThan($dateDue)) {
+                $daysLate = abs($dateReturn->diffInDays($dateDue, false));
                 $fineAmount = $daysLate * $finePerDay;
             }
 

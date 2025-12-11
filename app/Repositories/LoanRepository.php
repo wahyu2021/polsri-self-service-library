@@ -59,6 +59,25 @@ class LoanRepository implements LoanRepositoryInterface
                    ->get();
     }
 
+    public function searchLoans(string $query, int $limit = 5): Collection
+    {
+        return Loan::with(['user', 'book'])
+            ->where(function($q) use ($query) {
+                $q->where('transaction_code', 'like', "%{$query}%")
+                  ->orWhereHas('user', function($u) use ($query) {
+                      $u->where('name', 'like', "%{$query}%")
+                        ->orWhere('nim', 'like', "%{$query}%");
+                  })
+                  ->orWhereHas('book', function($b) use ($query) {
+                      $b->where('title', 'like', "%{$query}%")
+                        ->orWhere('isbn', 'like', "%{$query}%");
+                  });
+            })
+            ->latest()
+            ->limit($limit)
+            ->get();
+    }
+
     public function getActiveLoansByUserId(int $userId): Collection
     {
         return Loan::with('book')

@@ -59,7 +59,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('books', \App\Http\Controllers\Admin\BookController::class);
 
         // Circulation Management
-        Route::resource('loans', \App\Http\Controllers\Admin\LoanController::class)->only(['index', 'create', 'store']);
+        Route::get('/loans/search-user', [\App\Http\Controllers\Admin\LoanController::class, 'searchUser'])->name('loans.searchUser');
+        Route::get('/loans/search-book', [\App\Http\Controllers\Admin\LoanController::class, 'searchBook'])->name('loans.searchBook');
+        Route::resource('loans', \App\Http\Controllers\Admin\LoanController::class)->except(['show', 'destroy']);
         Route::put('loans/{loan}/return', [\App\Http\Controllers\Admin\LoanController::class, 'returnBook'])->name('loans.return');
         Route::put('loans/{loan}/approve', [\App\Http\Controllers\Admin\LoanController::class, 'approve'])->name('loans.approve');
 

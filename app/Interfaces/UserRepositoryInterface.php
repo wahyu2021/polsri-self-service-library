@@ -14,4 +14,7 @@ interface UserRepositoryInterface
     public function update(User $user, array $data): User;
     public function delete(User $user): bool;
     public function findById(int $id): ?User;
+    public function findStudentByNim(string $nim): ?User;
+    public function searchStudents(string $query, int $limit = 5): Collection;
+    public function searchUsers(string $query, int $limit = 5): Collection;
 }

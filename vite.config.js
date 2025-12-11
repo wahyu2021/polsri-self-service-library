@@ -9,7 +9,8 @@ export default defineConfig({
                 'resources/css/app.css', 
                 'resources/js/app.js',
                 'resources/js/student/logbook.js',
-                'resources/js/student/borrow.js'
+                'resources/js/student/borrow.js',
+                'resources/js/admin/loan-create.js',
             ],
             refresh: true,
         }),

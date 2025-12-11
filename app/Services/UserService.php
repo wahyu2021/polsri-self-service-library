@@ -41,6 +41,21 @@ class UserService
         return $this->userRepository->getStudents();
     }
 
+    public function findStudentByNim(string $nim)
+    {
+        return $this->userRepository->findStudentByNim($nim);
+    }
+
+    public function searchStudents(string $query)
+    {
+        return $this->userRepository->searchStudents($query);
+    }
+
+    public function searchUsers(string $query)
+    {
+        return $this->userRepository->searchUsers($query);
+    }
+
     public function createUser(array $data)
     {
         // Password hashing handled in FormRequest via passedValidation usually, 

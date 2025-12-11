@@ -20,7 +20,27 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
+        if ($request->has('q')) {
+            $users = $this->userService->searchUsers($request->get('q'));
+            
+            $formatted = $users->map(function($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'nim' => $user->nim ?? $user->email,
+                    'search_term' => $user->name,
+                ];
+            });
+
+            return response()->json(['success' => true, 'data' => $formatted]);
+        }
+
         $users = $this->userService->getAllUsers($request->all());
+
+        if ($request->ajax()) {
+            return view('admin.management-user._table', compact('users'));
+        }
+
         return view('admin.management-user.index', compact('users'));
     }
 

@@ -48,6 +48,16 @@ class BookService
         return $this->bookRepository->getAvailableBooks();
     }
 
+    public function findBookByIsbn(string $isbn)
+    {
+        return $this->bookRepository->findByIsbn($isbn);
+    }
+
+    public function searchBooks(string $query)
+    {
+        return $this->bookRepository->searchBooks($query);
+    }
+
     public function createBook(array $data)
     {
         if (isset($data['cover']) && $data['cover']) {

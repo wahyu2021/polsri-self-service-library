@@ -7,7 +7,7 @@
 
 @php
     $currentOption = collect($options)->firstWhere('value', $selected);
-    $currentLabel = $currcomentOption['label'] ?? $label;
+    $currentLabel = $currentOption['label'] ?? $label;
 @endphp
 
 <div x-data="{ 

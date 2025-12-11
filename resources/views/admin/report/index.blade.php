@@ -37,7 +37,7 @@
         <!-- Transactions -->
         <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)]">
             <p class="text-slate-500 text-sm font-medium">Transaksi Terlambat</p>
-            <h3 class="text-3xl font-bold text-slate-900 mt-2">{{ $totalTransactions }} <span class="text-lg text-slate-400 font-normal">Kali</span></h3>
+            <h3 class="text-3xl font-bold text-slate-900 mt-2 ml">{{ $totalTransactions }}</h3>
         </div>
 
         <!-- Average -->

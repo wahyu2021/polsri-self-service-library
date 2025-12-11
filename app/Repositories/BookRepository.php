@@ -35,6 +35,20 @@ class BookRepository implements BookRepositoryInterface
         return Book::find($id);
     }
 
+    public function findByIsbn(string $isbn): ?Book
+    {
+        return Book::where('isbn', $isbn)->first();
+    }
+
+    public function searchBooks(string $query, int $limit = 5): Collection
+    {
+        return Book::where('title', 'like', "%{$query}%")
+            ->orWhere('isbn', 'like', "%{$query}%")
+            ->orWhere('author', 'like', "%{$query}%")
+            ->limit($limit)
+            ->get();
+    }
+
     public function create(array $data): Book
     {
         return Book::create($data);
