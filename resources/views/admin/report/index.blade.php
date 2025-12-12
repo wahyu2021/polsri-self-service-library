@@ -47,6 +47,10 @@
                 class="px-4 py-1.5 bg-polsri-primary hover:bg-orange-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-orange-500/20 transition-all hover:-translate-y-0.5">
                 Terapkan
             </button>
+            <button type="submit" formaction="{{ route('admin.reports.pdf') }}"
+                class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-rose-500/20 transition-all hover:-translate-y-0.5">
+                Export PDF
+            </button>
             <button type="submit" formaction="{{ route('admin.reports.export') }}"
                 class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-500/20 transition-all hover:-translate-y-0.5">
                 Export CSV

@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cetak QR Code Absensi - UPT Perpustakaan</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
+    @vite(['resources/css/app.css'])
     <style>
         @media print {
             @page {
@@ -82,7 +81,7 @@
             <div class="flex flex-col items-center justify-center">
                 
                 <div class="p-3 border-2 border-dashed border-gray-300 rounded-xl bg-white mb-2">
-                    <div id="qrcode" class="bg-white"></div>
+                    <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code" class="w-[300px] h-[300px]">
                 </div>
                 <p class="font-mono text-[10px] text-gray-400 mb-6">ID: SECURE-ENCRYPTED</p>
 
@@ -122,17 +121,5 @@
         </button>
     </div>
 
-    <script type="text/javascript">
-        var qrContent = "{{ $qrContent ?? 'TestQR' }}";
-        
-        new QRCode(document.getElementById("qrcode"), {
-            text: qrContent,
-            width: 300,  /* Ukuran QR disesuaikan agar proporsional */
-            height: 300,
-            colorDark : "#000000",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
-        });
-    </script>
 </body>
 </html>

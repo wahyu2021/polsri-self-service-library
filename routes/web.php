@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::put('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
         Route::get('/settings/print-qr', [\App\Http\Controllers\Admin\SettingController::class, 'printQr'])->name('settings.print-qr');
+        Route::get('/settings/qr-pdf', [\App\Http\Controllers\Admin\SettingController::class, 'downloadQrPdf'])->name('settings.qr-pdf');
 
         // User Management
         Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
@@ -76,5 +77,6 @@ Route::middleware('auth')->group(function () {
         // Reports
         Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/export', [\App\Http\Controllers\Admin\ReportController::class, 'export'])->name('reports.export');
+        Route::get('/reports/pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportPdf'])->name('reports.pdf');
     });
 });
