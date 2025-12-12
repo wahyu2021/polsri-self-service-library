@@ -54,7 +54,7 @@ class ScanService
         [$qrPassword, $qrLat, $qrLng] = $parts;
 
         // 2. Validate Password
-        if ($qrPassword !== env('LOGBOOK_QR_SECRET')) {
+        if ($qrPassword !== env('LOGBOOK_QR_SECRET', 'secure-polsri-2025')) {
             throw new \Exception('QR Code tidak dikenali atau password salah.');
         }
 

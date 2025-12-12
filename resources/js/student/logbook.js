@@ -7,6 +7,7 @@ const statusDisplay = document.getElementById("status-display");
 let currentLat = null;
 let currentLng = null;
 let html5QrcodeScanner = null;
+let isProcessing = false; // [PENTING] Flag untuk mencegah double scan tanpa mematikan kamera
 
 // Config from Blade
 const checkInUrl = window.AppConfig.checkInUrl;
@@ -64,26 +65,43 @@ window.getCurrentLocation = function () {
 };
 
 function startScanner() {
+    // Hapus instance lama jika ada (penting saat hot reload/re-init)
+    if (html5QrcodeScanner) {
+        return;
+    }
+
     html5QrcodeScanner = new Html5Qrcode("reader");
     const config = {
         fps: 10,
-        qrbox: { width: 250, height: 250 },
+        qrbox: function(viewfinderWidth, viewfinderHeight) {
+            let minEdgePercentage = 0.70;
+            let minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+            let qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+            return {
+                width: qrboxSize,
+                height: qrboxSize
+            };
+        },
         aspectRatio: 1.0,
     };
 
     html5QrcodeScanner
         .start({ facingMode: "environment" }, config, onScanSuccess)
         .then(() => {
+            console.log("Kamera berhasil dimuat.");
+
+            // [PERBAIKAN 1] Typo "none" -> "hidden"
+            // Ini wajib diganti agar tulisan "Memuat Kamera" hilang
             const fallback = document.getElementById("camera-fallback");
             if (fallback) {
-                fallback.classList.add("none");
+                fallback.classList.add("hidden");
             }
         })
         .catch((err) => {
             console.error("Camera Error", err);
             const fallback = document.getElementById("camera-fallback");
             if (fallback) {
-                fallback.innerText = "Gagal Memuat Kamera. Pastikan Izin Diberikan.";
+                fallback.innerText = "Gagal Memuat Kamera. " + err;
                 fallback.classList.remove("text-white/30");
                 fallback.classList.add("text-red-500");
             }
@@ -91,18 +109,30 @@ function startScanner() {
 }
 
 function onScanSuccess(decodedText) {
-    if (html5QrcodeScanner) html5QrcodeScanner.pause();
+    // [PERBAIKAN 2] Gunakan Logic Flag
+    // Jika sedang memproses data sebelumnya, abaikan scan baru.
+    // Jangan gunakan .pause() karena sering bikin kamera freeze.
+    if (isProcessing) return;
+
+    isProcessing = true; // Kunci proses
+    console.log("QR Terdeteksi: ", decodedText);
+
     processCheckIn(decodedText);
 }
 
 async function processCheckIn(qrValue) {
+    // Cek Lokasi Dulu
     if (!currentLat) {
         showFeedback(
             false,
             "GPS Error",
-            "Lokasi belum ditemukan. Pastikan GPS aktif."
+            "Lokasi belum ditemukan. Tunggu indikator hijau."
         );
-        if (html5QrcodeScanner) html5QrcodeScanner.resume();
+
+        // Buka kunci scan setelah 2 detik agar bisa scan ulang
+        setTimeout(() => {
+            isProcessing = false;
+        }, 2000);
         return;
     }
 
@@ -112,7 +142,7 @@ async function processCheckIn(qrValue) {
     statusDisplay.classList.remove("hidden");
     statusDisplay.className =
         "mb-4 p-3 rounded-xl text-center text-sm font-bold bg-slate-100 text-slate-500";
-    statusDisplay.innerText = "Memverifikasi Lokasi...";
+    statusDisplay.innerText = "Memverifikasi...";
 
     try {
         const response = await fetch(checkInUrl, {
@@ -124,19 +154,25 @@ async function processCheckIn(qrValue) {
 
         if (result.success) {
             showFeedback(true, "Berhasil!", result.message);
+            // Redirect setelah sukses
             setTimeout(() => (window.location.href = dashboardUrl), 2000);
         } else {
             showFeedback(false, "Gagal Masuk", result.message);
-            // Resume scanning after 3s if failed
+
+            // Buka kunci scan jika gagal (QR salah/expired)
             setTimeout(() => {
-                if (html5QrcodeScanner) html5QrcodeScanner.resume();
                 statusDisplay.classList.add("hidden");
+                isProcessing = false;
             }, 3000);
         }
     } catch (error) {
+        console.error(error);
         showFeedback(false, "Error Sistem", "Terjadi kesalahan jaringan.");
+
+        // Buka kunci scan jika error server
         setTimeout(() => {
-            if (html5QrcodeScanner) html5QrcodeScanner.resume();
+            statusDisplay.classList.add("hidden");
+            isProcessing = false;
         }, 3000);
     }
 }

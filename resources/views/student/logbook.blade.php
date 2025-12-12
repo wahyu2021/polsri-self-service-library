@@ -4,7 +4,7 @@
         
         <div class="relative flex-1 bg-gray-900 overflow-hidden group">
             
-            <div id="reader" class="w-full h-full object-cover"></div>
+            <div id="reader" class="w-full h-full bg-black overflow-hidden relative"></div>
 
             <div id="camera-fallback" class="absolute inset-0 flex items-center justify-center text-white/30 text-sm">
                 Memuat Kamera...
