@@ -11,4 +11,5 @@ interface LogbookRepositoryInterface
     public function getVisitorsCountByDate(Carbon $date): int;
     public function getRecentEntries(int $limit = 10): Collection;
     public function create(array $data): Logbook;
+    public function getAllWithFilters(array $filters, int $perPage = 15);
 }

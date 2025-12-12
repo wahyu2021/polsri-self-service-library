@@ -1,94 +1,190 @@
 <x-layouts.admin title="Dashboard">
     
-    <!-- Header Section -->
-    <x-ui.header title="Dashboard Overview" subtitle="Pantau aktivitas perpustakaan secara real-time.">
-        <div class="flex items-center gap-2 text-sm font-medium text-slate-500 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
-            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-            {{ now()->translatedFormat('l, d F Y') }}
+    <!-- Top Header & Actions -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Dashboard</h1>
+            <p class="text-slate-500 text-sm">Overview aktivitas perpustakaan hari ini.</p>
         </div>
-    </x-ui.header>
+        
+        <div class="flex items-center gap-3">
+            <span class="hidden sm:flex items-center gap-2 text-xs font-medium text-slate-500 bg-white px-3 py-2 rounded-lg border border-slate-200 shadow-sm mr-2">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                {{ now()->translatedFormat('d M Y') }}
+            </span>
 
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <x-ui.stats-card title="Pengunjung Hari Ini" :value="$visitorsToday ?? 0" color="blue">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-        </x-ui.stats-card>
-
-        <x-ui.stats-card title="Buku Sedang Dipinjam" :value="$activeLoans ?? 0" color="orange">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-        </x-ui.stats-card>
-
-        <x-ui.stats-card title="Terlambat Kembali" :value="$overdueBooks ?? 0" color="rose">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-        </x-ui.stats-card>
+            <a href="{{ route('admin.books.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-orange-500 hover:text-orange-600 text-slate-700 text-sm font-bold rounded-lg transition-all shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Buku
+            </a>
+            <a href="{{ route('admin.users.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-lg transition-all shadow-lg shadow-slate-900/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+                Anggota
+            </a>
+        </div>
     </div>
 
-    <!-- Main Content Area: Split View -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <!-- Left Column: Validation Queue (2/3 width) -->
-        <div class="lg:col-span-2 flex flex-col gap-6">
-            
-            <!-- Queue Section -->
-            <x-ui.card>
-                <div class="p-6 border-b border-slate-50 flex items-center justify-between">
-                    <h3 class="font-bold text-slate-900">Antrean Validasi (Exit Pass)</h3>
-                    <x-ui.badge color="orange">{{ $validationQueue->count() }} Pending</x-ui.badge>
+    <!-- Metrics Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Card 1 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Pengunjung</p>
+                    <h3 class="text-2xl font-bold text-slate-900 mt-1">{{ $visitorsToday ?? 0 }}</h3>
                 </div>
-                
+                <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-xs">
+                <span class="text-emerald-600 font-bold flex items-center">
+                    <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    Hari ini
+                </span>
+                <span class="text-slate-400">Total scan masuk logbook</span>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Sirkulasi Aktif</p>
+                    <h3 class="text-2xl font-bold text-slate-900 mt-1">{{ $activeLoans ?? 0 }}</h3>
+                </div>
+                <div class="p-2 bg-orange-50 text-orange-600 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-xs">
+                <span class="text-slate-500">Buku sedang dipinjam mahasiswa</span>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Terlambat</p>
+                    <h3 class="text-2xl font-bold text-rose-600 mt-1">{{ $overdueBooks ?? 0 }}</h3>
+                </div>
+                <div class="p-2 bg-rose-50 text-rose-600 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-xs">
+                <span class="text-rose-600 font-bold bg-rose-50 px-1.5 py-0.5 rounded">Action Needed</span>
+                <span class="text-slate-400">Melewati tenggat waktu</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Layout Grid: 8 columns (Content) + 4 columns (Sidebar) -->
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+        
+        <!-- Main Content (Validation Queue) -->
+        <div class="xl:col-span-8 flex flex-col gap-6">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-white border border-slate-200 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Validasi Exit Pass</h3>
+                            <p class="text-slate-500 text-xs">Permintaan peminjaman yang menunggu persetujuan.</p>
+                        </div>
+                    </div>
+                    @if($validationQueue->count() > 0)
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-700 animate-pulse">
+                            {{ $validationQueue->count() }} Pending
+                        </span>
+                    @else
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">
+                            Semua Beres
+                        </span>
+                    @endif
+                </div>
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left">
-                        <thead class="bg-slate-50 text-slate-500 font-medium border-b border-slate-100">
+                        <thead class="bg-white text-slate-500 border-b border-slate-100 text-xs uppercase tracking-wider">
                             <tr>
-                                <th class="px-6 py-3">Mahasiswa</th>
-                                <th class="px-6 py-3">Judul Buku</th>
-                                <th class="px-6 py-3">Waktu Request</th>
-                                <th class="px-6 py-3 text-right">Aksi</th>
+                                <th class="px-6 py-4 font-semibold w-[35%]">Detail Mahasiswa</th>
+                                <th class="px-6 py-4 font-semibold w-[40%]">Buku Dipinjam</th>
+                                <th class="px-6 py-4 font-semibold w-[25%] text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-50">
                             @forelse($validationQueue as $loan)
-                            <tr class="hover:bg-slate-50/50 transition">
-                                <td class="px-6 py-4">
-                                    <div class="font-medium text-slate-900">{{ $loan->user->name }}</div>
-                                    <div class="text-xs text-slate-500">{{ $loan->user->nim }}</div>
+                            <tr class="group hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4 align-top">
+                                    <div class="flex items-start gap-3">
+                                        <div class="w-8 h-8 rounded bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-xs mt-0.5">
+                                            {{ substr($loan->user->name, 0, 1) }}
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-slate-900">{{ $loan->user->name }}</div>
+                                            <div class="text-xs text-slate-500 font-mono">{{ $loan->user->nim }}</div>
+                                            <div class="mt-1 text-[10px] text-slate-400">
+                                                Request: {{ $loan->created_at->diffForHumans() }}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4">
-                                    <div class="text-slate-700 truncate max-w-[200px]">{{ $loan->book->title }}</div>
-                                    <div class="text-xs text-slate-400 font-mono">{{ $loan->book->isbn }}</div>
+                                <td class="px-6 py-4 align-top">
+                                    <div>
+                                        <div class="font-medium text-slate-800 line-clamp-2">{{ $loan->book->title }}</div>
+                                        <div class="flex items-center gap-2 mt-1.5">
+                                            <span class="text-[10px] font-mono bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded border border-slate-200">
+                                                {{ $loan->book->isbn }}
+                                            </span>
+                                            <span class="text-[10px] text-slate-400">
+                                                Stok: {{ $loan->book->stock }}
+                                            </span>
+                                        </div>
+                                    </div>
                                 </td>
-                                <td class="px-6 py-4 text-slate-500">
-                                    {{ $loan->created_at->diffForHumans() }}
-                                </td>
-                                <td class="px-6 py-4 text-right">
-                                    <div class="flex items-center justify-end gap-2">
-                                        <button class="p-2 text-rose-600 hover:bg-rose-50 rounded-lg transition" title="Tolak">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                            </svg>
-                                        </button>
-                                        <button class="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition" title="Setujui">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <td class="px-6 py-4 align-top text-right">
+                                    <form action="{{ route('admin.loans.approve', $loan->id) }}" method="POST" onsubmit="return confirm('Setujui peminjaman ini?');">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition-all hover:shadow hover:-translate-y-0.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                             </svg>
+                                            APPROVE
                                         </button>
-                                    </div>
+                                    </form>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="px-6 py-12 text-center text-slate-400">
-                                    <div class="flex flex-col items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        <span class="text-sm">Tidak ada antrean validasi saat ini.</span>
+                                <td colspan="3" class="px-6 py-16 text-center">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <div class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-3">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </div>
+                                        <h4 class="text-slate-900 font-bold text-sm">Tidak Ada Antrean</h4>
+                                        <p class="text-slate-500 text-xs mt-1 max-w-xs">Semua permintaan peminjaman telah divalidasi. Kerja bagus!</p>
                                     </div>
                                 </td>
                             </tr>
@@ -96,43 +192,53 @@
                         </tbody>
                     </table>
                 </div>
-            </x-ui.card>
-
+            </div>
         </div>
 
-        <!-- Right Column: Live Feed (1/3 width) -->
-        <div class="lg:col-span-1">
-            <x-ui.card class="h-full max-h-[600px] flex flex-col">
-                <div class="p-6 border-b border-slate-50">
-                    <h3 class="font-bold text-slate-900">Live Absensi</h3>
-                    <p class="text-xs text-slate-500 mt-1">Real-time QR Scan Feed</p>
+        <!-- Sidebar (Activity Feed) -->
+        <div class="xl:col-span-4 space-y-6">
+            
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <h3 class="font-bold text-slate-800 text-sm">Aktivitas Terbaru</h3>
+                    <a href="{{ route('admin.reports.index') }}" class="text-[10px] font-bold text-polsri-primary hover:underline">LIHAT SEMUA</a>
                 </div>
 
-                <div class="overflow-y-auto flex-1 p-4 space-y-4 custom-scrollbar">
-                    @forelse($recentLogbooks as $log)
-                    <div class="flex items-start gap-3 p-3 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-100">
-                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-sm flex-shrink-0">
-                            {{ substr($log->user->name, 0, 1) }}
-                        </div>
+                <div class="p-0">
+                    @forelse($recentLogbooks->take(6) as $log)
+                    <div class="relative flex items-start gap-4 p-4 border-b border-slate-50 hover:bg-slate-50/80 transition-colors last:border-0">
+                        <!-- Status Dot -->
+                        <div class="mt-1.5 w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] flex-shrink-0"></div>
+                        
                         <div class="flex-1 min-w-0">
-                            <p class="text-sm font-bold text-slate-900 truncate">{{ $log->user->name }}</p>
-                            <p class="text-xs text-slate-500">{{ $log->check_in_time->format('H:i:s') }} • {{ $log->user->nim }}</p>
-                            
-                            <div class="mt-1.5 flex items-center gap-1.5">
-                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                <span class="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">GPS Valid</span>
+                            <div class="flex items-center justify-between mb-0.5">
+                                <p class="text-xs font-bold text-slate-900 truncate">{{ $log->user->name }}</p>
+                                <span class="text-[10px] text-slate-400 font-mono">{{ $log->check_in_time->format('H:i') }}</span>
                             </div>
+                            <p class="text-[11px] text-slate-500">Scan Masuk • <span class="font-mono">{{ $log->user->nim }}</span></p>
                         </div>
                     </div>
                     @empty
-                    <div class="text-center py-8 text-slate-400 text-sm">
-                        Belum ada aktivitas scan.
+                    <div class="p-8 text-center text-slate-400 text-xs italic">
+                        Belum ada aktivitas hari ini.
                     </div>
                     @endforelse
                 </div>
-            </x-ui.card>
+                
+                <div class="p-3 bg-slate-50 border-t border-slate-100 text-center">
+                    <p class="text-[10px] text-slate-400">Menampilkan 6 aktivitas terakhir</p>
+                </div>
+            </div>
+
         </div>
 
     </div>
 
+    <script>
+        function confirmApprove(formId) {
+            if(confirm('Setujui peminjaman ini?')) {
+                document.getElementById(formId).submit();
+            }
+        }
+    </script>
 </x-layouts.admin>

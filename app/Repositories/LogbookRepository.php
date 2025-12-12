@@ -26,4 +26,23 @@ class LogbookRepository implements LogbookRepositoryInterface
     {
         return Logbook::create($data);
     }
+
+    public function getAllWithFilters(array $filters, int $perPage = 15)
+    {
+        $query = Logbook::with('user')->latest('check_in_time');
+
+        if (!empty($filters['date'])) {
+            $query->whereDate('check_in_time', $filters['date']);
+        }
+
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->whereHas('user', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('nim', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->paginate($perPage);
+    }
 }

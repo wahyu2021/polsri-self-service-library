@@ -57,6 +57,9 @@ Route::middleware('auth')->group(function () {
         
         // Book Management
         Route::resource('books', \App\Http\Controllers\Admin\BookController::class);
+        
+        // Logbook Management
+        Route::resource('logbooks', \App\Http\Controllers\Admin\LogbookController::class)->only(['index']);
 
         // Circulation Management
         Route::get('/loans/search-user', [\App\Http\Controllers\Admin\LoanController::class, 'searchUser'])->name('loans.searchUser');
