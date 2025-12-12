@@ -7,9 +7,8 @@ const statusDisplay = document.getElementById("status-display");
 let currentLat = null;
 let currentLng = null;
 let html5QrcodeScanner = null;
-let isProcessing = false; // [PENTING] Flag untuk mencegah double scan tanpa mematikan kamera
+let isProcessing = false;
 
-// Config from Blade
 const checkInUrl = window.AppConfig.checkInUrl;
 const dashboardUrl = window.AppConfig.dashboardUrl;
 const csrfToken = window.AppConfig.csrfToken;
@@ -30,7 +29,6 @@ window.getCurrentLocation = function () {
                 currentLat = position.coords.latitude;
                 currentLng = position.coords.longitude;
 
-                // Update UI
                 gpsText.innerText =
                     "Lokasi Terkunci (Akurasi: " +
                     Math.round(position.coords.accuracy) +
@@ -39,7 +37,6 @@ window.getCurrentLocation = function () {
                 gpsDot.className =
                     "w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]";
 
-                // Set Input Values
                 document.getElementById("input_latitude").value = currentLat;
                 document.getElementById("input_longitude").value = currentLng;
             },
@@ -65,7 +62,6 @@ window.getCurrentLocation = function () {
 };
 
 function startScanner() {
-    // Hapus instance lama jika ada (penting saat hot reload/re-init)
     if (html5QrcodeScanner) {
         return;
     }
@@ -89,9 +85,6 @@ function startScanner() {
         .start({ facingMode: "environment" }, config, onScanSuccess)
         .then(() => {
             console.log("Kamera berhasil dimuat.");
-
-            // [PERBAIKAN 1] Typo "none" -> "hidden"
-            // Ini wajib diganti agar tulisan "Memuat Kamera" hilang
             const fallback = document.getElementById("camera-fallback");
             if (fallback) {
                 fallback.classList.add("hidden");
@@ -109,12 +102,9 @@ function startScanner() {
 }
 
 function onScanSuccess(decodedText) {
-    // [PERBAIKAN 2] Gunakan Logic Flag
-    // Jika sedang memproses data sebelumnya, abaikan scan baru.
-    // Jangan gunakan .pause() karena sering bikin kamera freeze.
     if (isProcessing) return;
 
-    isProcessing = true; // Kunci proses
+    isProcessing = true;
     console.log("QR Terdeteksi: ", decodedText);
 
     processCheckIn(decodedText);
@@ -129,7 +119,6 @@ async function processCheckIn(qrValue) {
             "Lokasi belum ditemukan. Tunggu indikator hijau."
         );
 
-        // Buka kunci scan setelah 2 detik agar bisa scan ulang
         setTimeout(() => {
             isProcessing = false;
         }, 2000);
@@ -154,12 +143,9 @@ async function processCheckIn(qrValue) {
 
         if (result.success) {
             showFeedback(true, "Berhasil!", result.message);
-            // Redirect setelah sukses
             setTimeout(() => (window.location.href = dashboardUrl), 2000);
         } else {
             showFeedback(false, "Gagal Masuk", result.message);
-
-            // Buka kunci scan jika gagal (QR salah/expired)
             setTimeout(() => {
                 statusDisplay.classList.add("hidden");
                 isProcessing = false;
@@ -169,7 +155,6 @@ async function processCheckIn(qrValue) {
         console.error(error);
         showFeedback(false, "Error Sistem", "Terjadi kesalahan jaringan.");
 
-        // Buka kunci scan jika error server
         setTimeout(() => {
             statusDisplay.classList.add("hidden");
             isProcessing = false;
@@ -185,7 +170,6 @@ function showFeedback(isSuccess, title, message) {
     const msgEl = document.getElementById("feedback-message");
 
     overlay.classList.remove("hidden");
-    // Force reflow
     void overlay.offsetWidth;
     overlay.classList.remove("opacity-0");
     content.classList.remove("scale-50");
