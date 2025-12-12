@@ -106,20 +106,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 1. Get Initial Values
+            // Initial Configuration
             var lat = Number("{{ $settings['library_lat']->value ?? '-2.986383' }}");
             var lng = Number("{{ $settings['library_lng']->value ?? '104.7315341' }}");
             var radius = Number("{{ $settings['validation_radius']->value ?? '50' }}");
 
-            // 2. Initialize Map
+            // Initialize Map
             var map = L.map('map').setView([lat, lng], 17);
 
-            // 3. Add Tile Layer (OpenStreetMap)
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
 
-            // 4. Add Marker & Circle
+            // Add Marker & Validation Circle
             var marker = L.marker([lat, lng], {draggable: true}).addTo(map);
             var circle = L.circle([lat, lng], {
                 color: '#F97316', // Polsri Primary Color
@@ -128,7 +127,7 @@
                 radius: radius
             }).addTo(map);
 
-            // 5. Function to update inputs
+            // Sync Inputs with Map
             function updatePosition(latlng) {
                 document.getElementById('lat_input').value = latlng.lat.toFixed(7);
                 document.getElementById('lng_input').value = latlng.lng.toFixed(7);
@@ -138,19 +137,15 @@
                 map.panTo(latlng);
             }
 
-            // 6. Event Listeners
-            
-            // Drag Marker
+            // Event Listeners
             marker.on('dragend', function(e) {
                 updatePosition(marker.getLatLng());
             });
 
-            // Click Map
             map.on('click', function(e) {
                 updatePosition(e.latlng);
             });
 
-            // Update Circle Radius manually
             window.updateCircle = function() {
                 var newRadius = parseInt(document.getElementById('radius_input').value) || 0;
                 circle.setRadius(newRadius);

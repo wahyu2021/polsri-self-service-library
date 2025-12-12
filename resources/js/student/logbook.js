@@ -10,8 +10,7 @@ let html5QrcodeScanner = null;
 let isProcessing = false;
 let watchId = null;
 
-// Sound Effect
-const beepSound = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"); // Short beep placeholder
+const beepSound = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"); 
 
 const checkInUrl = window.AppConfig.checkInUrl;
 const dashboardUrl = window.AppConfig.dashboardUrl;
@@ -22,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     startScanner();
 });
 
-// 1. Real-time GPS Tracking (Best Practice)
+// Real-time GPS Tracking
 function startGpsTracking() {
     gpsText.innerText = "Mencari satelit...";
     gpsBtnText.innerText = "Mencari satelit...";
@@ -35,19 +34,17 @@ function startGpsTracking() {
                 currentLng = position.coords.longitude;
                 const accuracy = Math.round(position.coords.accuracy);
 
-                // Visual Feedback based on accuracy
                 let accuracyText = `Akurasi: ${accuracy}m`;
                 let dotClass = "w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]";
                 
                 if (accuracy > 50) {
-                    dotClass = "w-2 h-2 rounded-full bg-yellow-400"; // Low accuracy warning
+                    dotClass = "w-2 h-2 rounded-full bg-yellow-400"; 
                 }
 
                 gpsText.innerText = `Lokasi Terkunci (${accuracyText})`;
                 gpsBtnText.innerText = "Lokasi Terkunci";
                 gpsDot.className = dotClass;
 
-                // Auto update hidden inputs
                 const latInput = document.getElementById("input_latitude");
                 const lngInput = document.getElementById("input_longitude");
                 if(latInput) latInput.value = currentLat;
@@ -65,9 +62,9 @@ function startGpsTracking() {
                 gpsDot.className = "w-2 h-2 rounded-full bg-rose-500";
             },
             {
-                enableHighAccuracy: true, // Force GPS hardware usage
+                enableHighAccuracy: true, 
                 timeout: 20000,
-                maximumAge: 5000, // Accept cache no older than 5s
+                maximumAge: 5000, 
             }
         );
     } else {
@@ -75,7 +72,7 @@ function startGpsTracking() {
     }
 }
 
-// 2. Robust Scanner Initialization
+// Scanner Initialization
 function startScanner() {
     if (html5QrcodeScanner) {
         return;
@@ -83,20 +80,15 @@ function startScanner() {
 
     html5QrcodeScanner = new Html5Qrcode("reader");
     
-    // Config optimized for mobile scanning
     const config = {
         fps: 10,
         qrbox: function(viewfinderWidth, viewfinderHeight) {
-            // Rectangular scanning area (better for long QR codes or various distances)
             const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
             return {
                 width: Math.floor(minEdge * 0.7),
                 height: Math.floor(minEdge * 0.7)
             };
         },
-        // experimentalFeatures: {
-        //     useBarCodeDetectorIfSupported: true
-        // }
     };
 
     html5QrcodeScanner
@@ -106,7 +98,6 @@ function startScanner() {
             onScanSuccess
         )
         .then(() => {
-            console.log("Kamera berhasil dimuat.");
             const fallback = document.getElementById("camera-fallback");
             if (fallback) fallback.classList.add("hidden");
         })
@@ -124,24 +115,21 @@ function startScanner() {
 function onScanSuccess(decodedText) {
     if (isProcessing) return;
 
-    // 3. Instant Feedback: Pause Camera & Beep
+    // Instant Feedback
     isProcessing = true;
     try {
-        html5QrcodeScanner.pause(true); // Freeze the frame
-        // beepSound.play().catch(e => console.log("Audio play blocked", e));
+        html5QrcodeScanner.pause(true); 
     } catch (e) {
         console.warn("Failed to pause scanner", e);
     }
     
-    console.log("QR Terdeteksi: ", decodedText);
     processCheckIn(decodedText);
 }
 
 async function processCheckIn(qrValue) {
-    // Validate Location Presence
     if (!currentLat || !currentLng) {
         showFeedback(false, "GPS Error", "Menunggu sinyal GPS... Silakan tunggu indikator hijau.");
-        resumeScanner(); // Let user try again
+        resumeScanner(); 
         return;
     }
 
@@ -163,18 +151,17 @@ async function processCheckIn(qrValue) {
         if (result.success) {
             showFeedback(true, "Berhasil!", result.message);
             
-            // Redirect after delay
             setTimeout(() => {
                 window.location.href = dashboardUrl;
             }, 2000);
         } else {
             showFeedback(false, "Gagal Masuk", result.message);
-            resumeScanner(); // Allow retry
+            resumeScanner(); 
         }
     } catch (error) {
         console.error(error);
         showFeedback(false, "Error Sistem", "Terjadi kesalahan jaringan atau server.");
-        resumeScanner(); // Allow retry
+        resumeScanner(); 
     }
 }
 
@@ -187,7 +174,7 @@ function resumeScanner() {
         } catch (e) {
             console.warn("Failed to resume scanner", e);
         }
-    }, 2500); // Delay slightly longer to let user read the error
+    }, 2500); 
 }
 
 function showFeedback(isSuccess, title, message) {
@@ -198,7 +185,6 @@ function showFeedback(isSuccess, title, message) {
     const msgEl = document.getElementById("feedback-message");
 
     overlay.classList.remove("hidden");
-    // Force reflow
     void overlay.offsetWidth;
     overlay.classList.remove("opacity-0");
     
@@ -216,7 +202,6 @@ function showFeedback(isSuccess, title, message) {
     titleEl.innerText = title;
     msgEl.innerText = message;
 
-    // Auto hide feedback is handled by resumeScanner or redirect
     if (!isSuccess) {
         setTimeout(() => {
             overlay.classList.add("opacity-0");
@@ -229,9 +214,7 @@ function showFeedback(isSuccess, title, message) {
     }
 }
 
-// Expose location retry to window for the button
 window.getCurrentLocation = function() {
-    // Restart logic if button clicked manually
     if (watchId) navigator.geolocation.clearWatch(watchId);
     startGpsTracking();
 };

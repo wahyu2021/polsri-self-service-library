@@ -45,7 +45,7 @@ class ScanService
      */
     public function processCheckIn(User $user, string $qrCode, float $lat, float $lng): Model
     {
-        // 1. Parse QR Code format: PASSWORD|LAT|LNG
+        // Parse QR Code format: PASSWORD|LAT|LNG
         $parts = explode('|', $qrCode);
         if (count($parts) !== 3) {
             throw new \Exception('Format QR Code tidak valid.');
@@ -53,12 +53,12 @@ class ScanService
 
         [$qrPassword, $qrLat, $qrLng] = $parts;
 
-        // 2. Validate Password
+        // Validate Password
         if ($qrPassword !== env('LOGBOOK_QR_SECRET', 'secure-polsri-2025')) {
             throw new \Exception('QR Code tidak dikenali atau password salah.');
         }
 
-        // 3. Validate QR Location against System Settings (Ensure QR is up-to-date)
+        // Validate QR Location against System Settings
         $libraryLat = (float) Setting::where('key', 'library_lat')->value('value') ?? self::DEFAULT_LAT;
         $libraryLng = (float) Setting::where('key', 'library_lng')->value('value') ?? self::DEFAULT_LNG;
 
@@ -67,7 +67,7 @@ class ScanService
             throw new \Exception('QR Code kadaluarsa. Lokasi perpustakaan telah berubah.');
         }
 
-        // 4. Validate User Distance (GPS)
+        // Validate User Distance (GPS)
         $distance = $this->calculateDistance($lat, $lng, $libraryLat, $libraryLng);
         $radius = (int) Setting::where('key', 'validation_radius')->value('value') ?? self::MAX_DISTANCE_METERS;
         

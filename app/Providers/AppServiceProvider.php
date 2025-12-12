@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Http\ViewComposers\NotificationComposer;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Pagination\Paginator;
 use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
@@ -43,6 +44,11 @@ class AppServiceProvider extends ServiceProvider
     {
         // Inject notifikasi ke layout utama kapanpun ia dirender
         View::composer('components.layouts.app', NotificationComposer::class);
+        
+        // Custom Pagination View
+        Paginator::defaultView('vendor.pagination.polsri');
+        Paginator::defaultSimpleView('vendor.pagination.polsri');
+
         config(['app.locale' => 'id']);
         Carbon::setLocale('id');
         date_default_timezone_set('Asia/Jakarta');
