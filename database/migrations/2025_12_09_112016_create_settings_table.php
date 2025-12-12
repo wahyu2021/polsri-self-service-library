@@ -16,8 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('key')->unique();
             $table->text('value')->nullable();
-            $table->string('type')->default('text'); // text, number, boolean
-            $table->string('label')->nullable(); // Nama yang muncul di UI
+            $table->string('type')->default('text');
+            $table->string('label')->nullable();
             $table->timestamps();
         });
 
@@ -25,21 +25,21 @@ return new class extends Migration
         DB::table('settings')->insert([
             [
                 'key' => 'library_lat',
-                'value' => '-2.986383', // Contoh Koordinat Polsri
+                'value' => '-2.9797274',
                 'type' => 'text',
                 'label' => 'Latitude Lokasi Perpustakaan',
                 'created_at' => now(), 'updated_at' => now()
             ],
             [
                 'key' => 'library_lng',
-                'value' => '104.730248', // Contoh Koordinat Polsri
+                'value' => '104.7314965',
                 'type' => 'text',
                 'label' => 'Longitude Lokasi Perpustakaan',
                 'created_at' => now(), 'updated_at' => now()
             ],
             [
                 'key' => 'validation_radius',
-                'value' => '50', // meter
+                'value' => '50', // Meter
                 'type' => 'number',
                 'label' => 'Radius Validasi Absensi (Meter)',
                 'created_at' => now(), 'updated_at' => now()

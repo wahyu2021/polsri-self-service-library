@@ -43,6 +43,11 @@
 
 /* Print Styles */
 @media print {
+    @page {
+        size: auto;
+        margin: 10mm 30mm;
+    }
+
     /* Hide Navigation & UI Controls */
     aside, 
     header, 
@@ -57,6 +62,7 @@
         height: auto !important;
         overflow: visible !important;
         background: white !important;
+        position: static !important;
     }
 
     main {
