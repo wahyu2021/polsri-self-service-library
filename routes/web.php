@@ -27,7 +27,9 @@ Route::middleware('auth')->group(function () {
         
         // Smart Logbook (Scan Masuk)
         Route::get('/logbook', [\App\Http\Controllers\Student\ScanController::class, 'index'])->name('logbook.index');
-        Route::post('/logbook', [\App\Http\Controllers\Student\ScanController::class, 'store'])->name('logbook.store');
+        Route::post('/logbook', [\App\Http\Controllers\Student\ScanController::class, 'store'])
+            ->name('logbook.store')
+            ->middleware('throttle:3,1'); // Limit: 3 requests per minute per user
 
         // Self-Service Borrowing
         Route::get('/borrow', [\App\Http\Controllers\Student\LoanController::class, 'create'])->name('borrow.index');

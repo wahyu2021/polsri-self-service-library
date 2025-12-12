@@ -6,6 +6,7 @@ use App\Http\ViewComposers\NotificationComposer;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\URL;
 use Carbon\Carbon;
 
 class AppServiceProvider extends ServiceProvider
@@ -42,6 +43,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Force HTTPS in Production
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         // Inject notifikasi ke layout utama kapanpun ia dirender
         View::composer('components.layouts.app', NotificationComposer::class);
         

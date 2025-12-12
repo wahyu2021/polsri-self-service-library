@@ -22,6 +22,7 @@ class StoreUserRequest extends FormRequest
             'nim' => ['nullable', 'string', 'max:20', 'unique:users'],
             'role' => ['required', Rule::enum(UserRole::class)],
             'password' => ['required', 'confirmed', 'min:8'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ];
     }
 
