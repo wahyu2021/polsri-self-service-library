@@ -9,7 +9,7 @@
         </div>
         <a href="{{ route('student.profile.index') }}" class="relative group block lg:hidden">
             <div class="w-12 h-12 rounded-full bg-slate-100 border-2 border-white shadow-lg overflow-hidden">
-                <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('images/default-profile.jpg') }}" 
+                <img src="{{ $user->avatar ? \Illuminate\Support\Facades\Storage::url($user->avatar) : asset('images/default-profile.jpg') }}
                      alt="Profile" 
                      class="w-full h-full object-cover">
             </div>
