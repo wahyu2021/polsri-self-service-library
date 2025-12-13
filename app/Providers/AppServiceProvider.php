@@ -52,8 +52,8 @@ class AppServiceProvider extends ServiceProvider
         View::composer('components.layouts.app', NotificationComposer::class);
         
         // Custom Pagination View
-        Paginator::defaultView('vendor.pagination.polsri');
-        Paginator::defaultSimpleView('vendor.pagination.polsri');
+        Paginator::defaultView('pagination.polsri');
+        Paginator::defaultSimpleView('pagination.polsri');
 
         config(['app.locale' => 'id']);
         Carbon::setLocale('id');
