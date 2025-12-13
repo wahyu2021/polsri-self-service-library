@@ -11,7 +11,10 @@ class LogbookRepository implements LogbookRepositoryInterface
 {
     public function getVisitorsCountByDate(Carbon $date): int
     {
-        return Logbook::whereDate('created_at', $date)->count();
+        return Logbook::whereBetween('created_at', [
+            $date->copy()->startOfDay(),
+            $date->copy()->endOfDay()
+        ])->count();
     }
 
     public function getRecentEntries(int $limit = 10): Collection

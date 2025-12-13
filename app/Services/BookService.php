@@ -18,24 +18,26 @@ class BookService
 
     public function getExternalBooksInspiration()
     {
-        try {
-            // Mengambil buku bertema teknologi/komputer terbaru
-            $response = Http::get('https://www.googleapis.com/books/v1/volumes', [
-                'q' => 'subject:computers',
-                'orderBy' => 'newest',
-                'maxResults' => 4,
-                'langRestrict' => 'id' // Preferensi bahasa (opsional)
-            ]);
+        return \Illuminate\Support\Facades\Cache::remember('external_books_inspiration', 720, function () {
+            try {
+                // Mengambil buku bertema teknologi/komputer terbaru
+                $response = Http::get('https://www.googleapis.com/books/v1/volumes', [
+                    'q' => 'subject:computers',
+                    'orderBy' => 'newest',
+                    'maxResults' => 4,
+                    'langRestrict' => 'id' // Preferensi bahasa (opsional)
+                ]);
 
-            if ($response->successful()) {
-                return $response->json()['items'] ?? [];
+                if ($response->successful()) {
+                    return $response->json()['items'] ?? [];
+                }
+            } catch (\Exception $e) {
+                // Fail silently agar tidak merusak dashboard jika internet mati
+                return [];
             }
-        } catch (\Exception $e) {
-            // Fail silently agar tidak merusak dashboard jika internet mati
+            
             return [];
-        }
-
-        return [];
+        });
     }
 
     public function getAllBooks(array $filters)

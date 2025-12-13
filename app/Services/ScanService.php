@@ -59,8 +59,13 @@ class ScanService
         }
 
         // Validate QR Location against System Settings
-        $libraryLat = (float) Setting::where('key', 'library_lat')->value('value') ?? self::DEFAULT_LAT;
-        $libraryLng = (float) Setting::where('key', 'library_lng')->value('value') ?? self::DEFAULT_LNG;
+        $libraryLat = (float) \Illuminate\Support\Facades\Cache::remember('setting_library_lat', 1440, function() {
+            return Setting::where('key', 'library_lat')->value('value') ?? self::DEFAULT_LAT;
+        });
+
+        $libraryLng = (float) \Illuminate\Support\Facades\Cache::remember('setting_library_lng', 1440, function() {
+            return Setting::where('key', 'library_lng')->value('value') ?? self::DEFAULT_LNG;
+        });
 
         // Allow small floating point difference (epsilon)
         if (abs($qrLat - $libraryLat) > 0.0001 || abs($qrLng - $libraryLng) > 0.0001) {
@@ -69,7 +74,10 @@ class ScanService
 
         // Validate User Distance (GPS)
         $distance = $this->calculateDistance($lat, $lng, $libraryLat, $libraryLng);
-        $radius = (int) Setting::where('key', 'validation_radius')->value('value') ?? self::MAX_DISTANCE_METERS;
+        
+        $radius = (int) \Illuminate\Support\Facades\Cache::remember('setting_validation_radius', 1440, function() {
+            return Setting::where('key', 'validation_radius')->value('value') ?? self::MAX_DISTANCE_METERS;
+        });
         
         if ($distance > $radius) {
              throw new \Exception("Anda berada di luar jangkauan (Jarak: " . round($distance) . "m). Max: " . $radius . "m.");

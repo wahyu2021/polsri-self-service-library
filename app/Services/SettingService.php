@@ -23,5 +23,10 @@ class SettingService
         foreach ($data as $key => $value) {
             $this->settingRepository->updateByKey($key, $value);
         }
+
+        // Clear cache so ScanService picks up new values immediately
+        \Illuminate\Support\Facades\Cache::forget('setting_library_lat');
+        \Illuminate\Support\Facades\Cache::forget('setting_library_lng');
+        \Illuminate\Support\Facades\Cache::forget('setting_validation_radius');
     }
 }
