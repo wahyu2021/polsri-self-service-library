@@ -31,22 +31,23 @@ class BookRepository implements BookRepositoryInterface
 
     public function getAvailableBooks(): Collection
     {
-        return Book::where('stock', '>', 0)->orderBy('title')->get();
+        return Book::with('category')->where('stock', '>', 0)->orderBy('title')->get();
     }
 
     public function findById(int $id): ?Book
     {
-        return Book::find($id);
+        return Book::with('category')->find($id);
     }
 
     public function findByIsbn(string $isbn): ?Book
     {
-        return Book::where('isbn', $isbn)->first();
+        return Book::with('category')->where('isbn', $isbn)->first();
     }
 
     public function searchBooks(string $query, int $limit = 5): Collection
     {
-        return Book::where('title', 'like', "%{$query}%")
+        return Book::with('category')
+            ->where('title', 'like', "%{$query}%")
             ->orWhere('isbn', 'like', "%{$query}%")
             ->orWhere('author', 'like', "%{$query}%")
             ->limit($limit)

@@ -171,6 +171,6 @@ class LoanRepository implements LoanRepositoryInterface
 
     public function findById(int $id): ?Loan
     {
-        return Loan::find($id);
+        return Loan::with(['user', 'book'])->find($id);
     }
 }
