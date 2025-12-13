@@ -20,13 +20,14 @@ class UserService
 
     public function updateAvatar(User $user, UploadedFile $file)
     {
+        $disk = config('filesystems.default', 'public');
         // Delete old avatar
-        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-            Storage::disk('public')->delete($user->avatar);
+        if ($user->avatar && Storage::disk($disk)->exists($user->avatar)) {
+            Storage::disk($disk)->delete($user->avatar);
         }
 
         // Store new avatar
-        $path = $file->store('avatars', 'public');
+        $path = $file->store('avatars', $disk);
 
         return $this->userRepository->update($user, ['avatar' => $path]);
     }
