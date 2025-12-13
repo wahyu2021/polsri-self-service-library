@@ -30,7 +30,7 @@
             border: 4px solid #000;
             padding: 40px;
             margin: 20px;
-            height: 90vh; /* Approximate full page height minus margins */
+            height: 90vh;
             box-sizing: border-box;
             position: relative;
         }

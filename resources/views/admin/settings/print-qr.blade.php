@@ -9,7 +9,7 @@
         @media print {
             @page {
                 size: A4 portrait;
-                margin: 0; /* Hilangkan margin default browser */
+                margin: 0;
             }
             body {
                 margin: 0;
@@ -20,28 +20,28 @@
             .no-print {
                 display: none !important;
             }
-            /* Container utama mensimulasikan kertas A4 */
+            /* Container A4 */
             .page-container {
                 width: 210mm;
                 height: 297mm;
-                padding: 10mm; /* Jarak aman agar border tidak terpotong printer */
+                padding: 10mm;
                 margin: 0 auto;
                 background: white;
-                box-sizing: border-box; /* Agar padding tidak menambah lebar total */
+                box-sizing: border-box;
                 display: flex;
                 flex-direction: column;
             }
-            /* Border Frame */
+    
             .border-frame {
-                flex: 1; /* Mengisi sisa tinggi kertas */
+                flex: 1;
                 border: 3px solid black;
                 display: flex;
                 flex-direction: column;
-                justify-content: space-between; /* Header atas, Footer bawah */
+                justify-content: space-between;
                 position: relative;
             }
         }
-        /* Style untuk tampilan layar agar mirip kertas */
+      
         @media screen {
             body { background: #f3f4f6; padding: 20px; display: flex; justify-content: center; }
             .page-container {
