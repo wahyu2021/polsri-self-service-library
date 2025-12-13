@@ -10,7 +10,7 @@
                     
                     <div class="relative w-24 h-24 mx-auto mb-4 group">
                         <div class="w-24 h-24 rounded-full bg-slate-100 flex items-center justify-center border-4 border-orange-200 overflow-hidden shadow-md">
-                            <img src="{{ $user->avatar ? asset('storage/' . $user->avatar) : asset('images/default-profile.jpg') }}" 
+                            <img src="{{ $user->avatar ? \Illuminate\Support\Facades\Storage::url($user->avatar) : asset('images/default-profile.jpg') }}"
                                  alt="Profile" 
                                  class="w-full h-full object-cover">
                         </div>
