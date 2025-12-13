@@ -41,4 +41,10 @@
             }
         }
     ],
+    "crons": [
+        {
+            "path": "/api/run-scheduler?token=secure_cron_polsri_9928374",
+            "schedule": "0 8 * * *"
+        }
+    ]
 }
