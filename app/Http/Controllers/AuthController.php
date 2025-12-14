@@ -53,7 +53,7 @@ class AuthController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'nim' => $request->nim,
-            'role' => 'student', // Default role
+            'role' => \App\Enums\UserRole::MAHASISWA->value,
             'password' => Hash::make($request->password),
         ]);
 
