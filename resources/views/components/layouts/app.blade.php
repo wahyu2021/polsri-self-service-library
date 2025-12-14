@@ -69,7 +69,7 @@
                             <p class="text-xs text-slate-500">{{ Auth::user()->nim }}</p>
                         </div>
                         <div class="w-10 h-10 rounded-full bg-slate-100 border-2 border-white shadow-sm overflow-hidden">
-                            <img src="{{ $user->avatar ? \Illuminate\Support\Facades\Storage::url($user->avatar) : asset('images/default-profile.jpg') }} 
+                            <img src="{{ $user->avatar ? \Illuminate\Support\Facades\Storage::url($user->avatar) : asset('images/default-profile.jpg') }} "
                                  class="w-full h-full object-cover">
                         </div>
                     </a>
