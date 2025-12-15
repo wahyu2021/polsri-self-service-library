@@ -15,6 +15,29 @@ const csrfToken = window.AppConfig.csrfToken;
 
 let html5QrcodeScanner = null;
 
+// Beep sound using Web Audio API
+function playBeep(frequency = 1000, duration = 200) {
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration / 1000);
+    } catch (e) {
+        console.log('Web Audio API not supported');
+    }
+}
+
 // Handle "Enter" key on input
 if (isbnInput) {
     isbnInput.addEventListener("keypress", function(event) {
@@ -43,6 +66,7 @@ window.startScanner = function() {
         config, 
         (decodedText) => {
             // Success
+            playBeep(1000, 200); // Beep pada frequency 1000Hz selama 200ms
             stopScanner();
             isbnInput.value = decodedText;
             checkBook();
@@ -90,6 +114,8 @@ window.checkBook = async function() {
         if (!response.ok) throw new Error('Buku tidak ditemukan.');
 
         const data = await response.json();
+        playBeep(1200, 150); // Double beep untuk success lookup
+        playBeep(1400, 150);
         showPreview(data, isbn);
 
     } catch (error) {
