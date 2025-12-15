@@ -4,6 +4,7 @@
     <x-ui.header 
         title="Dashboard" 
         subtitle="Overview aktivitas perpustakaan hari ini."
+        :breadcrumbs="[['label' => 'Dashboard']]"
     >
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.books.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-orange-500 hover:text-orange-600 text-slate-700 text-sm font-bold rounded-lg transition-all shadow-sm">
