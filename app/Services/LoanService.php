@@ -8,6 +8,7 @@ use App\Models\Book;
 use App\Enums\LoanStatus;
 use App\Notifications\LoanDueSoonNotification;
 use App\Notifications\LoanOverdueNotification;
+use App\Notifications\FineUnpaidNotification;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -210,6 +211,15 @@ class LoanService
             ]);
 
             $loan->book->increment('stock');
+
+            // Send fine notification if there's a fine to pay
+            if ($fineAmount > 0) {
+                try {
+                    $loan->user->notify(new FineUnpaidNotification($loan));
+                } catch (\Exception $e) {
+                    Log::error("Failed to send fine notification for loan {$loan->id}: " . $e->getMessage());
+                }
+            }
 
             return [
                 'loan' => $loan,
