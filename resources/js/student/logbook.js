@@ -10,7 +10,28 @@ let html5QrcodeScanner = null;
 let isProcessing = false;
 let watchId = null;
 
-const beepSound = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"); 
+// Function to generate beep sound using Web Audio API
+function playBeep(frequency = 800, duration = 200) {
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration / 1000);
+    } catch (e) {
+        console.warn("Audio context not available:", e);
+    }
+} 
 
 const checkInUrl = window.AppConfig.checkInUrl;
 const dashboardUrl = window.AppConfig.dashboardUrl;
@@ -149,12 +170,15 @@ async function processCheckIn(qrValue) {
         const result = await response.json();
 
         if (result.success) {
+            playBeep(800, 200);
+            playBeep(1000, 100);
             showFeedback(true, "Berhasil!", result.message);
             
             setTimeout(() => {
                 window.location.href = dashboardUrl;
             }, 2000);
         } else {
+            playBeep(400, 300);
             showFeedback(false, "Gagal Masuk", result.message);
             resumeScanner(); 
         }
