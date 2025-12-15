@@ -42,43 +42,46 @@
             </div>
 
             <!-- Row 2: Filter Controls -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                <!-- Filter User dengan Search -->
-                <div class="relative">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Mahasiswa</label>
-                    <input type="text" id="loanUserSearch" name="user_search" placeholder="Cari nama atau NIM..." 
-                        value="{{ request('user_search') }}"
-                        class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary text-sm"
-                        autocomplete="off">
-                    <input type="hidden" name="user_id" id="loanUserId" value="{{ request('user_id') }}">
-                    <div id="loanUserSearchResults" class="hidden absolute z-50 top-full mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto"></div>
-                </div>
+            <div class="overflow-visible">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <!-- Filter User dengan Search -->
+                    <div class="relative">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Mahasiswa</label>
+                        <input type="text" id="loanUserSearch" name="user_search" placeholder="Cari nama atau NIM..." 
+                            value="{{ request('user_search') }}"
+                            class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary text-sm"
+                            autocomplete="off">
+                        <input type="hidden" name="user_id" id="loanUserId" value="{{ request('user_id') }}">
+                    </div>
 
-                <!-- Filter Overdue -->
-                <div class="flex flex-col">
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Filter</label>
-                    <label class="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer">
-                        <input type="checkbox" name="overdue" value="true" {{ request('overdue') === 'true' ? 'checked' : '' }} class="rounded">
-                        <span class="text-sm font-medium text-slate-700">Hanya Terlambat</span>
-                    </label>
-                </div>
+                    <!-- Filter Overdue -->
+                    <div class="flex flex-col">
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Filter</label>
+                        <label class="flex items-center gap-2 px-3 py-2 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer">
+                            <input type="checkbox" name="overdue" value="true" {{ request('overdue') === 'true' ? 'checked' : '' }} class="rounded">
+                            <span class="text-sm font-medium text-slate-700">Hanya Terlambat</span>
+                        </label>
+                    </div>
 
-                <!-- Search -->
-                <div>
-                    <label class="block text-sm font-bold text-slate-700 mb-2">Cari Transaksi</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Transaksi, buku..." 
-                        class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary text-sm">
-                </div>
+                    <!-- Search -->
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Cari Transaksi</label>
+                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Transaksi, buku..." 
+                            class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary text-sm">
+                    </div>
 
-                <!-- Buttons -->
-                <div class="flex gap-2 items-end">
-                    <button type="submit" class="flex-1 px-4 py-2 bg-polsri-primary hover:bg-orange-600 text-white font-bold text-sm rounded-lg transition">
-                        Terapkan
-                    </button>
-                    <a href="{{ route('admin.loans.index') }}" class="flex-1 px-4 py-2 border border-slate-200 text-slate-600 font-bold text-sm rounded-lg hover:bg-slate-50 transition text-center">
-                        Reset
-                    </a>
+                    <!-- Buttons -->
+                    <div class="flex gap-2 items-end">
+                        <button type="submit" class="flex-1 px-4 py-2 bg-polsri-primary hover:bg-orange-600 text-white font-bold text-sm rounded-lg transition">
+                            Terapkan
+                        </button>
+                        <a href="{{ route('admin.loans.index') }}" class="flex-1 px-4 py-2 border border-slate-200 text-slate-600 font-bold text-sm rounded-lg hover:bg-slate-50 transition text-center">
+                            Reset
+                        </a>
+                    </div>
                 </div>
+                <!-- Dropdown outside grid -->
+                <div id="loanUserSearchResults" class="hidden fixed bg-white border border-slate-200 rounded-lg shadow-xl max-h-60 overflow-y-auto" style="z-index: 9999; min-width: 250px;"></div>
             </div>
         </form>
     </x-ui.card>
@@ -107,6 +110,14 @@
         const userIdInput = document.getElementById('loanUserId');
         const users = @json($users);
 
+        function updateDropdownPosition() {
+            const inputRect = userSearchInput.getBoundingClientRect();
+            userSearchResults.style.position = 'fixed';
+            userSearchResults.style.top = (inputRect.bottom + 5) + 'px';
+            userSearchResults.style.left = inputRect.left + 'px';
+            userSearchResults.style.width = inputRect.width + 'px';
+        }
+
         userSearchInput?.addEventListener('input', function() {
             const query = this.value.toLowerCase().trim();
             
@@ -123,6 +134,7 @@
             if (filtered.length === 0) {
                 userSearchResults.innerHTML = '<div class="px-4 py-3 text-sm text-slate-500">Tidak ada hasil</div>';
                 userSearchResults.classList.remove('hidden');
+                updateDropdownPosition();
                 return;
             }
 
@@ -135,6 +147,7 @@
             `).join('');
 
             userSearchResults.classList.remove('hidden');
+            updateDropdownPosition();
         });
 
         function selectLoanUser(id, name) {
@@ -149,6 +162,10 @@
                 userSearchResults?.classList.add('hidden');
             }
         });
+
+        // Update position on scroll/resize
+        window.addEventListener('scroll', updateDropdownPosition);
+        window.addEventListener('resize', updateDropdownPosition);
     </script>
 
 </x-layouts.admin>
