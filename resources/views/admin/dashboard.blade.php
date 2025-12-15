@@ -181,10 +181,78 @@
     </div>
 
     <script>
-        function confirmApprove(formId) {
-            if(confirm('Setujui peminjaman ini?')) {
-                document.getElementById(formId).submit();
-            }
+        function handleApprove(event, form) {
+            event.preventDefault();
+            
+            if(!confirm('Setujui peminjaman ini?')) return false;
+
+            const btn = form.querySelector('button');
+            const originalContent = btn.innerHTML;
+            
+            // Loading state
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="animate-spin h-3.5 w-3.5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                WAIT...
+            `;
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new FormData(form)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    // Show Toast
+                    window.Toast.fire({
+                        icon: 'success',
+                        title: data.message,
+                        customClass: {
+                            popup: 'shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl border-l-8 border-emerald-500 bg-white pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
+                            title: 'font-bold text-slate-800 text-sm',
+                            timerProgressBar: '!bg-emerald-500'
+                        },
+                        iconColor: '#10b981'
+                    });
+
+                    // Remove row with animation
+                    const row = form.closest('tr');
+                    row.classList.add('transition-opacity', 'duration-500', 'opacity-0');
+                    setTimeout(() => row.remove(), 500);
+
+                    // Update count (optimistic)
+                    // Polling will correct it shortly anyway
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                window.Toast.fire({
+                    icon: 'error',
+                    title: error.message || 'Terjadi kesalahan saat memproses.',
+                    customClass: {
+                        popup: 'shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl border-l-8 border-rose-500 bg-white pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
+                        title: 'font-bold text-slate-800 text-sm',
+                        timerProgressBar: '!bg-rose-500'
+                    },
+                    iconColor: '#f43f5e'
+                });
+                
+                // Reset button
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            });
+
+            return false;
         }
 
         document.addEventListener('DOMContentLoaded', function() {
