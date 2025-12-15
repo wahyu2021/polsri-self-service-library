@@ -29,6 +29,7 @@ class DashboardService
             'visitorsToday' => $this->logbookRepository->getVisitorsCountByDate(Carbon::today()),
             'activeLoans' => $this->loanRepository->getActiveLoansCount(),
             'overdueBooks' => $this->loanRepository->getOverdueLoansCount(),
+            'todayFines' => $this->loanRepository->getTodayFinesTotal(),
             'validationQueue' => $this->loanRepository->getPendingValidation(),
             'recentLogbooks' => $this->logbookRepository->getRecentEntries(6),
             'chartData' => $this->logbookRepository->getWeeklyStats(),

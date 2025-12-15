@@ -119,6 +119,17 @@
                                     class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition font-mono">
                             </div>
                             @error('fine_amount') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+
+                            <!-- Is Fine Paid -->
+                            <div class="mt-3 flex items-center gap-2">
+                                <input type="hidden" name="is_fine_paid" value="0">
+                                <input type="checkbox" id="is_fine_paid" name="is_fine_paid" value="1" 
+                                    class="w-4 h-4 rounded text-polsri-primary focus:ring-polsri-primary border-gray-300"
+                                    {{ old('is_fine_paid', $loan->is_fine_paid) ? 'checked' : '' }}>
+                                <label for="is_fine_paid" class="text-sm text-slate-700 font-medium cursor-pointer">
+                                    Tandai Denda Lunas
+                                </label>
+                            </div>
                         </div>
 
                     </div>

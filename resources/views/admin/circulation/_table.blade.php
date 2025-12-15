@@ -36,18 +36,36 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 @if ($loan->status === \App\Enums\LoanStatus::RETURNED)
-                                    <x-ui.badge color="slate">Dikembalikan</x-ui.badge>
+                                    <div class="flex justify-center mb-2">
+                                        <x-ui.badge color="slate">Dikembalikan</x-ui.badge>
+                                    </div>
                                     @if ($loan->fine_amount > 0)
-                                        <div class="text-[10px] text-rose-600 mt-1 font-bold">Denda: Rp
-                                            {{ number_format($loan->fine_amount, 0, ',', '.') }}</div>
+                                        <div class="flex flex-col items-center gap-1">
+                                            <div class="text-[10px] font-mono font-bold text-slate-700">Denda: Rp {{ number_format($loan->fine_amount, 0, ',', '.') }}</div>
+                                            <div class="flex justify-center">
+                                                @if ($loan->is_fine_paid)
+                                                    <x-ui.badge color="emerald">Lunas</x-ui.badge>
+                                                @else
+                                                    <x-ui.badge color="rose">Belum Lunas</x-ui.badge>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="text-[10px] text-slate-500">Tanpa denda</div>
                                     @endif
                                 @elseif($loan->status === \App\Enums\LoanStatus::PENDING_VALIDATION)
-                                    <x-ui.badge color="amber">Menunggu Validasi</x-ui.badge>
+                                    <div class="flex justify-center">
+                                        <x-ui.badge color="amber">Menunggu Validasi</x-ui.badge>
+                                    </div>
                                 @else
                                     @if (\Carbon\Carbon::now()->gt($loan->due_date))
-                                        <x-ui.badge color="rose" pulse>Terlambat</x-ui.badge>
+                                        <div class="flex justify-center">
+                                            <x-ui.badge color="rose" pulse>Terlambat</x-ui.badge>
+                                        </div>
                                     @else
-                                        <x-ui.badge color="emerald">Dipinjam</x-ui.badge>
+                                        <div class="flex justify-center">
+                                            <x-ui.badge color="emerald">Dipinjam</x-ui.badge>
+                                        </div>
                                     @endif
                                 @endif
                             </td>

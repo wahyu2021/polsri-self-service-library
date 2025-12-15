@@ -35,7 +35,18 @@ class LoanRepository implements LoanRepositoryInterface
             });
         }
 
-        return $query->latest()->paginate($perPage);
+        // Filter by user
+        if (isset($filters['user_id']) && $filters['user_id']) {
+            $query->where('user_id', $filters['user_id']);
+        }
+
+        // Filter overdue (hanya untuk status borrowed)
+        if (isset($filters['overdue']) && $filters['overdue'] === 'true') {
+            $query->where('status', 'borrowed')
+                  ->where('due_date', '<', now());
+        }
+
+        return $query->latest()->paginate($perPage)->withQueryString();
     }
 
     public function getActiveLoansCount(): int
@@ -131,8 +142,17 @@ class LoanRepository implements LoanRepositoryInterface
                    ->where('user_id', $userId)
                    ->where('status', LoanStatus::RETURNED)
                    ->where('fine_amount', '>', 0)
-                   ->where('is_fine_paid', false)
+                   ->whereRaw('"is_fine_paid" = false')
                    ->get();
+    }
+
+    public function getTodayFinesTotal(): int
+    {
+        return (int) Loan::where('status', LoanStatus::RETURNED)
+            ->whereDate('return_date', Carbon::today())
+            ->where('fine_amount', '>', 0)
+            ->whereRaw('"is_fine_paid" = false')
+            ->sum('fine_amount');
     }
 
     public function getFinesByDateRange(string $startDate, string $endDate)
@@ -181,5 +201,72 @@ class LoanRepository implements LoanRepositoryInterface
     public function findById(int $id): ?Loan
     {
         return Loan::with(['user', 'book'])->find($id);
+    }
+
+    public function getUnpaidFines(int $limit = null)
+    {
+        $query = Loan::with(['user', 'book'])
+                    ->where('status', LoanStatus::RETURNED)
+                    ->where('fine_amount', '>', 0)
+                    ->whereRaw('"is_fine_paid" = false')
+                    ->orderBy('return_date', 'desc');
+
+        return $limit ? $query->limit($limit)->get() : $query->paginate(15);
+    }
+
+    public function getPaidFines(int $limit = null)
+    {
+        $query = Loan::with(['user', 'book'])
+                    ->where('status', LoanStatus::RETURNED)
+                    ->where('fine_amount', '>', 0)
+                    ->whereRaw('"is_fine_paid" = true')
+                    ->orderBy('return_date', 'desc');
+
+        return $limit ? $query->limit($limit)->get() : $query->paginate(15);
+    }
+
+    public function getFinesStatistics(): array
+    {
+        return [
+            'unpaid_total' => (int) Loan::where('status', LoanStatus::RETURNED)
+                ->where('fine_amount', '>', 0)
+                ->whereRaw('"is_fine_paid" = false')
+                ->sum('fine_amount'),
+            'paid_total' => (int) Loan::where('status', LoanStatus::RETURNED)
+                ->where('fine_amount', '>', 0)
+                ->whereRaw('"is_fine_paid" = true')
+                ->sum('fine_amount'),
+            'unpaid_count' => Loan::where('status', LoanStatus::RETURNED)
+                ->where('fine_amount', '>', 0)
+                ->whereRaw('"is_fine_paid" = false')
+                ->count(),
+            'paid_count' => Loan::where('status', LoanStatus::RETURNED)
+                ->where('fine_amount', '>', 0)
+                ->whereRaw('"is_fine_paid" = true')
+                ->count(),
+        ];
+    }
+
+    public function getStudentFineStatus(int $userId): array
+    {
+        return [
+            'unpaid' => Loan::with('book')
+                ->where('user_id', $userId)
+                ->where('status', LoanStatus::RETURNED)
+                ->where('fine_amount', '>', 0)
+                ->whereRaw('"is_fine_paid" = false')
+                ->get(),
+            'paid' => Loan::with('book')
+                ->where('user_id', $userId)
+                ->where('status', LoanStatus::RETURNED)
+                ->where('fine_amount', '>', 0)
+                ->whereRaw('"is_fine_paid" = true')
+                ->get(),
+            'total_unpaid' => (int) Loan::where('user_id', $userId)
+                ->where('status', LoanStatus::RETURNED)
+                ->where('fine_amount', '>', 0)
+                ->whereRaw('"is_fine_paid" = false')
+                ->sum('fine_amount'),
+        ];
     }
 }

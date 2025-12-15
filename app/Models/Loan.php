@@ -21,6 +21,7 @@ class Loan extends Model
         'due_date',
         'return_date',
         'fine_amount',
+        'is_fine_paid',
     ];
 
     protected $casts = [
@@ -28,6 +29,7 @@ class Loan extends Model
         'due_date' => 'date',
         'return_date' => 'date',
         'status' => LoanStatus::class,
+        'is_fine_paid' => 'boolean',
     ];
 
     public function user()

@@ -87,6 +87,16 @@
                 <span class="font-medium">Sirkulasi</span>
             </a>
 
+            <a href="{{ route('admin.fines.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group {{ request()->routeIs('admin.fines.*') ? 'bg-polsri-primary text-white shadow-lg shadow-orange-500/20' : 'text-slate-400 hover:text-white hover:bg-white/5' }}">
+                <svg class="w-5 h-5 {{ request()->routeIs('admin.fines.*') ? 'text-white' : 'text-slate-500 group-hover:text-white' }}"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="font-medium">Manajemen Denda</span>
+            </a>
+
             <div class="pt-4 pb-2">
                 <p class="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Laporan & User</p>
             </div>

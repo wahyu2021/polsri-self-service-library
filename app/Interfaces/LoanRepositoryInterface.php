@@ -25,9 +25,16 @@ interface LoanRepositoryInterface
     public function getUnpaidFinesByUserId(int $userId): Collection;
 
     // Reporting & Analytics
+    public function getTodayFinesTotal(): int;
     public function getFinesByDateRange(string $startDate, string $endDate); // Returns Builder/Paginator
     public function getTopViolators(string $startDate, string $endDate, int $limit = 5): Collection;
     public function getDailyFineStats(string $startDate, string $endDate): Collection;
+
+    // Fine Management
+    public function getUnpaidFines(int $limit = null);
+    public function getPaidFines(int $limit = null);
+    public function getFinesStatistics(): array;
+    public function getStudentFineStatus(int $userId): array;
 
     public function create(array $data): Loan;
     public function update(Loan $loan, array $data): Loan;

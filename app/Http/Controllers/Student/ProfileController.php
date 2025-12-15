@@ -5,21 +5,28 @@ namespace App\Http\Controllers\Student;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Student\UpdateProfileRequest;
 use App\Services\UserService;
+use App\Services\StudentService;
 use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
     protected UserService $userService;
+    protected StudentService $studentService;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, StudentService $studentService)
     {
         $this->userService = $userService;
+        $this->studentService = $studentService;
     }
 
     public function index()
     {
+        $user = Auth::user();
+        $fineData = $this->studentService->getStudentFinesSummary($user->id);
+
         return view('student.profile', [
-            'user' => Auth::user()
+            'user' => $user,
+            'fineData' => $fineData
         ]);
     }
 

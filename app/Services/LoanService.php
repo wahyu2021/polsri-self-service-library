@@ -186,20 +186,27 @@ class LoanService
             $returnDate = Carbon::now();
             $fineAmount = 0;
             
-            $finePerDay = Setting::where('key', 'fine_per_day')->value('value') ?? 1000;
+            // Get fine setting, strictly ensure it's a valid positive integer
+            $settingValue = Setting::where('key', 'fine_per_day')->value('value');
+            $finePerDay = intval($settingValue);
+            if ($finePerDay <= 0) {
+                $finePerDay = 1000; // Default fallback
+            }
 
             $dateDue = $loan->due_date->copy()->startOfDay();
-            $dateReturn = $returnDate->startOfDay();
+            $dateReturn = $returnDate->copy()->startOfDay();
 
             if ($dateReturn->greaterThan($dateDue)) {
-                $daysLate = abs($dateReturn->diffInDays($dateDue, false));
+                // Gunakan absolute = true untuk memastikan hasil positif
+                $daysLate = $dateReturn->diffInDays($dateDue, true); 
                 $fineAmount = $daysLate * $finePerDay;
             }
 
             $this->loanRepository->update($loan, [
                 'status' => LoanStatus::RETURNED,
                 'return_date' => $returnDate,
-                'fine_amount' => $fineAmount,
+                'fine_amount' => max(0, $fineAmount), // Double safety: never less than 0
+                'is_fine_paid' => $fineAmount == 0 ? true : false,
             ]);
 
             $loan->book->increment('stock');

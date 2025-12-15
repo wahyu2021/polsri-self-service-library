@@ -21,6 +21,7 @@ class UpdateLoanRequest extends FormRequest
             'due_date' => ['required', 'date', 'after_or_equal:borrow_date'],
             'return_date' => ['nullable', 'date', 'after_or_equal:borrow_date'],
             'fine_amount' => ['nullable', 'numeric', 'min:0'],
+            'is_fine_paid' => ['nullable', 'boolean'],
             'notes' => ['nullable', 'string', 'max:255'],
         ];
     }
@@ -33,6 +34,7 @@ class UpdateLoanRequest extends FormRequest
             'due_date' => 'Jatuh Tempo',
             'return_date' => 'Tanggal Kembali',
             'fine_amount' => 'Denda',
+            'is_fine_paid' => 'Status Pembayaran Denda',
         ];
     }
 }

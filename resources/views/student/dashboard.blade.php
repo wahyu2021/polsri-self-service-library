@@ -9,6 +9,11 @@
 
             <div class="lg:w-2/3 xl:w-3/4 p-6 lg:p-0 mt-4 lg:mt-0">
 
+                <!-- Fine Summary Card -->
+                @if(isset($fineData))
+                    <x-student.fine-summary-card :fineData="$fineData" />
+                @endif
+
                 <h2 class="font-bold text-slate-800 text-lg mb-4 hidden lg:block">Akses Cepat</h2>
                 <div class="grid grid-cols-2 gap-4 mb-8">
                     <x-student.menu-card route="{{ route('student.logbook.index') }}" label="Scan Logbook"

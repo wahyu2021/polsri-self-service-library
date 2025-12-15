@@ -39,6 +39,23 @@
                     <p class="text-slate-500 text-md mt-1">{{ $user->nim }}</p>
                     <p class="text-slate-500 text-md">{{ $user->email }}</p>
 
+                    @if(isset($fineData))
+                        <div class="mt-6 pt-6 border-t border-slate-100">
+                            @if($fineData['has_unpaid'])
+                                <div class="bg-rose-50 border border-rose-200 rounded-lg p-4">
+                                    <p class="text-xs font-bold text-rose-600 uppercase tracking-widest mb-2">Status Denda</p>
+                                    <p class="text-lg font-bold text-rose-600">Rp {{ number_format($fineData['unpaid_total'], 0, ',', '.') }}</p>
+                                    <p class="text-xs text-rose-500 mt-1">{{ $fineData['unpaid_count'] }} transaksi menunggu pembayaran</p>
+                                </div>
+                            @else
+                                <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
+                                    <p class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-2">Status Denda</p>
+                                    <p class="text-sm text-emerald-600 font-medium">Tidak ada denda yang belum dibayar ✓</p>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
                     <div class="mt-8 pt-8 border-t border-slate-100">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Kartu Perpustakaan Digital</p>
                         

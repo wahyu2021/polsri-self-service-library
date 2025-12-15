@@ -41,7 +41,22 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @forelse($historyLoans as $loan)
-                        <x-student.loan-card :loan="$loan" type="history" />
+                        <div>
+                            <x-student.loan-card :loan="$loan" type="history" />
+                            @if($loan->fine_amount > 0)
+                                <div class="mt-2 flex gap-2">
+                                    @if($loan->is_fine_paid)
+                                        <span class="flex-1 text-center text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded border border-emerald-100">
+                                            ✓ Denda Lunas
+                                        </span>
+                                    @else
+                                        <span class="flex-1 text-center text-[10px] font-bold text-rose-600 bg-rose-50 px-2 py-1 rounded border border-rose-100">
+                                            ⚠ Belum Lunas
+                                        </span>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
                     @empty
                         <div class="col-span-full text-center py-8">
                             <p class="text-sm text-slate-400">Belum ada riwayat peminjaman.</p>

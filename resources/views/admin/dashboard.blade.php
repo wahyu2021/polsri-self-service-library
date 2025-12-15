@@ -22,8 +22,8 @@
     </x-ui.header>
 
     <!-- Metrics Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <!-- Card 1 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Card 1: Pengunjung -->
         <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow">
             <div class="flex items-start justify-between">
                 <div>
@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <!-- Card 2 -->
+        <!-- Card 2: Sirkulasi -->
         <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow">
             <div class="flex items-start justify-between">
                 <div>
@@ -63,7 +63,7 @@
             </div>
         </div>
 
-        <!-- Card 3 -->
+        <!-- Card 3: Terlambat -->
         <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow">
             <div class="flex items-start justify-between">
                 <div>
@@ -79,6 +79,28 @@
             <div class="mt-4 flex items-center gap-2 text-xs">
                 <span class="text-rose-600 font-bold bg-rose-50 px-1.5 py-0.5 rounded">Action Needed</span>
                 <span class="text-slate-400">Melewati tenggat waktu</span>
+            </div>
+        </div>
+
+        <!-- Card 4: Pendapatan Denda (New) -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Denda Hari Ini</p>
+                    <h3 class="text-2xl font-bold text-emerald-600 mt-1">Rp {{ number_format($todayFines ?? 0, 0, ',', '.') }}</h3>
+                </div>
+                <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 text-xs">
+                 <span class="text-emerald-600 font-bold flex items-center">
+                    <svg class="w-3 h-3 mr-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                    Income
+                </span>
+                <span class="text-slate-400">Total denda dibayar hari ini</span>
             </div>
         </div>
     </div>

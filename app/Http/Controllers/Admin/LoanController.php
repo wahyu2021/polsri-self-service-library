@@ -38,9 +38,9 @@ class LoanController extends Controller
             $formatted = $loans->map(function($loan) {
                 return [
                     'id' => $loan->id,
-                    'title' => $loan->transaction_code . ' - ' . $loan->user->name, // Main text
-                    'isbn' => $loan->book->title, // Sub text (using existing UI structure)
-                    'search_term' => $loan->transaction_code, // Clean value for search input
+                    'title' => $loan->transaction_code . ' - ' . $loan->user->name,
+                    'isbn' => $loan->book->title,
+                    'search_term' => $loan->transaction_code,
                 ];
             });
 
@@ -48,12 +48,17 @@ class LoanController extends Controller
         }
 
         $loans = $this->loanService->getAllLoans($request->all());
+        
+        // Get users for dropdown
+        $users = \App\Models\User::where('role', 'mahasiswa')
+            ->orderBy('name')
+            ->get();
 
         if ($request->ajax()) {
             return view('admin.circulation._table', compact('loans'));
         }
 
-        return view('admin.circulation.index', compact('loans'));
+        return view('admin.circulation.index', compact('loans', 'users'));
     }
 
     public function create()
@@ -125,13 +130,38 @@ class LoanController extends Controller
     public function update(UpdateLoanRequest $request, Loan $loan)
     {
         try {
-            // Manual update for admin correction
             $data = $request->validated();
             
-            // Logic tambahan: Jika status diubah jadi bukan RETURNED, null-kan return_date jika admin mengosongkannya
-            if ($data['status'] !== \App\Enums\LoanStatus::RETURNED->value && empty($data['return_date'])) {
+            // Logika Otomatis saat Admin Mengubah Status ke RETURNED
+            if ($data['status'] === \App\Enums\LoanStatus::RETURNED->value && $loan->status !== \App\Enums\LoanStatus::RETURNED) {
+                // 1. Set Tanggal Kembali (jika kosong, pakai hari ini)
+                if (empty($data['return_date'])) {
+                    $data['return_date'] = now();
+                }
+
+                // 2. Hitung Denda Otomatis (jika admin tidak mengisi/mengisi 0)
+                if (empty($data['fine_amount']) || $data['fine_amount'] == 0) {
+                    $dateDue = $loan->due_date->copy()->startOfDay();
+                    $dateReturn = \Carbon\Carbon::parse($data['return_date'])->startOfDay();
+
+                    if ($dateReturn->greaterThan($dateDue)) {
+                        $daysLate = $dateReturn->diffInDays($dateDue, true);
+                        
+                        // Ambil setting denda
+                        $finePerDay = (int) \App\Models\Setting::where('key', 'fine_per_day')->value('value');
+                        if ($finePerDay <= 0) $finePerDay = 1000;
+
+                        $data['fine_amount'] = $daysLate * $finePerDay;
+                    }
+                }
+                // Set is_fine_paid based on whether fine amount > 0
+                $data['is_fine_paid'] = empty($data['fine_amount']) || $data['fine_amount'] == 0;
+            }
+            // Logika Reset: Jika status BUKAN Returned, hapus data kembali
+            elseif ($data['status'] !== \App\Enums\LoanStatus::RETURNED->value) {
                 $data['return_date'] = null;
-                $data['fine_amount'] = 0; // Reset fine if not returned
+                $data['fine_amount'] = 0;
+                $data['is_fine_paid'] = true;
             }
 
             $loan->update($data);

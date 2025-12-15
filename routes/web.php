@@ -85,5 +85,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
         Route::get('/reports/export', [\App\Http\Controllers\Admin\ReportController::class, 'export'])->name('reports.export');
         Route::get('/reports/pdf', [\App\Http\Controllers\Admin\ReportController::class, 'exportPdf'])->name('reports.pdf');
+
+        // Fine Management
+        Route::get('/fines', [\App\Http\Controllers\Admin\FineController::class, 'index'])->name('fines.index');
+        Route::put('/fines/{loan}/mark-paid', [\App\Http\Controllers\Admin\FineController::class, 'markPaid'])->name('fines.markPaid');
+        Route::put('/fines/{loan}/mark-unpaid', [\App\Http\Controllers\Admin\FineController::class, 'markUnpaid'])->name('fines.markUnpaid');
+        Route::get('/users/{userId}/fines', [\App\Http\Controllers\Admin\FineController::class, 'studentFines'])->name('fines.student');
     });
 });
