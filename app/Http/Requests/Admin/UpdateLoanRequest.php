@@ -17,9 +17,9 @@ class UpdateLoanRequest extends FormRequest
     {
         return [
             'status' => ['required', Rule::enum(LoanStatus::class)],
-            'borrow_date' => ['required', 'date'],
-            'due_date' => ['required', 'date', 'after_or_equal:borrow_date'],
-            'return_date' => ['nullable', 'date', 'after_or_equal:borrow_date'],
+            'borrow_date' => ['required', 'date_format:Y-m-d'],
+            'due_date' => ['required', 'date_format:Y-m-d', 'after_or_equal:borrow_date'],
+            'return_date' => ['nullable', 'date_format:Y-m-d', 'after_or_equal:borrow_date'],
             'fine_amount' => ['nullable', 'numeric', 'min:0'],
             'is_fine_paid' => ['nullable', 'boolean'],
             'notes' => ['nullable', 'string', 'max:255'],
@@ -35,6 +35,17 @@ class UpdateLoanRequest extends FormRequest
             'return_date' => 'Tanggal Kembali',
             'fine_amount' => 'Denda',
             'is_fine_paid' => 'Status Pembayaran Denda',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'borrow_date.date_format' => 'Format tanggal pinjam tidak valid. Gunakan format YYYY-MM-DD.',
+            'due_date.date_format' => 'Format jatuh tempo tidak valid. Gunakan format YYYY-MM-DD.',
+            'due_date.after_or_equal' => 'Jatuh tempo harus sama dengan atau setelah tanggal pinjam.',
+            'return_date.date_format' => 'Format tanggal kembali tidak valid. Gunakan format YYYY-MM-DD.',
+            'return_date.after_or_equal' => 'Tanggal kembali harus sama dengan atau setelah tanggal pinjam.',
         ];
     }
 }

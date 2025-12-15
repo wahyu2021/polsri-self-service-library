@@ -141,7 +141,8 @@ class LoanController extends Controller
 
                 // 2. Hitung Denda Otomatis (jika admin tidak mengisi/mengisi 0)
                 if (empty($data['fine_amount']) || $data['fine_amount'] == 0) {
-                    $dateDue = $loan->due_date->copy()->startOfDay();
+                    // Use the NEW due_date from form, not the old one from database
+                    $dateDue = \Carbon\Carbon::parse($data['due_date'])->startOfDay();
                     $dateReturn = \Carbon\Carbon::parse($data['return_date'])->startOfDay();
 
                     if ($dateReturn->greaterThan($dateDue)) {
