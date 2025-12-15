@@ -1,6 +1,26 @@
 <x-layouts.auth title="Masuk - Polsri Library">
 
-    <div class="mb-6">
+    @if ($errors->any())
+        <div class="mb-6 p-4 rounded-xl bg-red-50 border border-red-200">
+            <div class="flex gap-3">
+                <div class="flex-shrink-0 mt-0.5">
+                    <svg class="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4v.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-red-900 text-sm">Login Gagal</h3>
+                    <ul class="mt-2 space-y-1 text-sm text-red-700">
+                        @foreach ($errors->all() as $error)
+                            <li>• {{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <div class="mb-6 animate-fade-in">
         <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Selamat Datang</h2>
         <p class="text-slate-500 mt-1.5 text-sm leading-relaxed">
             Masuk untuk mengakses layanan perpustakaan.
