@@ -184,8 +184,33 @@
         function handleApprove(event, form) {
             event.preventDefault();
             
-            if(!confirm('Setujui peminjaman ini?')) return false;
+            Swal.fire({
+                title: 'Setujui Peminjaman?',
+                text: "Mahasiswa akan diizinkan membawa buku keluar.",
+                icon: 'question',
+                showCancelButton: true,
+                buttonsStyling: false,
+                heightAuto: false, // Prevent layout shifts
+                customClass: {
+                    container: 'z-[9999]', // Force very high z-index
+                    popup: 'bg-white rounded-2xl shadow-xl border border-slate-100 p-6',
+                    title: 'text-slate-800 text-lg font-bold mb-2',
+                    htmlContainer: 'text-slate-500 text-sm mb-6',
+                    confirmButton: 'bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl px-5 py-2.5 text-sm font-bold shadow-md shadow-emerald-200 transition-all transform active:scale-95 mr-2',
+                    cancelButton: 'bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl px-5 py-2.5 text-sm font-bold transition-all transform active:scale-95 ml-2'
+                },
+                confirmButtonText: 'Ya, Setujui',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    processApprove(form);
+                }
+            });
 
+            return false;
+        }
+
+        function processApprove(form) {
             const btn = form.querySelector('button');
             const originalContent = btn.innerHTML;
             
@@ -216,7 +241,7 @@
                         icon: 'success',
                         title: data.message,
                         customClass: {
-                            popup: 'shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl border-l-8 border-emerald-500 bg-white pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
+                            popup: 'shadow-lg shadow-emerald-500/20 rounded-2xl border-l-[6px] border-emerald-500 bg-white/95 backdrop-blur-xl pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
                             title: 'font-bold text-slate-800 text-sm',
                             timerProgressBar: '!bg-emerald-500'
                         },
@@ -228,8 +253,6 @@
                     row.classList.add('transition-opacity', 'duration-500', 'opacity-0');
                     setTimeout(() => row.remove(), 500);
 
-                    // Update count (optimistic)
-                    // Polling will correct it shortly anyway
                 } else {
                     throw new Error(data.message);
                 }
@@ -240,7 +263,7 @@
                     icon: 'error',
                     title: error.message || 'Terjadi kesalahan saat memproses.',
                     customClass: {
-                        popup: 'shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl border-l-8 border-rose-500 bg-white pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
+                        popup: 'shadow-lg shadow-rose-500/20 rounded-2xl border-l-[6px] border-rose-500 bg-white/95 backdrop-blur-xl pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
                         title: 'font-bold text-slate-800 text-sm',
                         timerProgressBar: '!bg-rose-500'
                     },
@@ -251,8 +274,6 @@
                 btn.disabled = false;
                 btn.innerHTML = originalContent;
             });
-
-            return false;
         }
 
         document.addEventListener('DOMContentLoaded', function() {

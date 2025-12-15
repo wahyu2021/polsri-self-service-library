@@ -180,13 +180,71 @@
 
     <!-- SweetAlert Toast Logic -->
     <script>
+        // Global Confirmation Dialog
+        window.confirmAction = function(event, message, type = 'danger') {
+            event.preventDefault();
+            const form = event.target;
+            
+            let confirmBtnClass = 'bg-rose-500 hover:bg-rose-600 text-white rounded-xl px-5 py-2.5 text-sm font-bold shadow-md shadow-rose-200 transition-all transform active:scale-95 mr-2';
+            let iconType = 'warning';
+
+            if (type === 'success') {
+                confirmBtnClass = 'bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl px-5 py-2.5 text-sm font-bold shadow-md shadow-emerald-200 transition-all transform active:scale-95 mr-2';
+                iconType = 'question';
+            } else if (type === 'info') {
+                 confirmBtnClass = 'bg-blue-500 hover:bg-blue-600 text-white rounded-xl px-5 py-2.5 text-sm font-bold shadow-md shadow-blue-200 transition-all transform active:scale-95 mr-2';
+                 iconType = 'info';
+            }
+
+            Swal.fire({
+                title: 'Konfirmasi',
+                text: message,
+                icon: iconType,
+                showCancelButton: true,
+                buttonsStyling: false,
+                heightAuto: false,
+                showLoaderOnConfirm: false, // Disable default loader swapping
+                customClass: {
+                    container: 'z-[9999]',
+                    popup: 'bg-white rounded-2xl shadow-xl border border-slate-100 p-6',
+                    title: 'text-slate-800 text-lg font-bold mb-2',
+                    htmlContainer: 'text-slate-500 text-sm mb-6',
+                    confirmButton: confirmBtnClass,
+                    cancelButton: 'bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl px-5 py-2.5 text-sm font-bold transition-all transform active:scale-95 ml-2'
+                },
+                confirmButtonText: 'Ya, Lanjutkan',
+                cancelButtonText: 'Batal',
+                preConfirm: () => {
+                    return new Promise((resolve) => {
+                         // Manually show loader inside the button to preserve styling
+                         const btn = Swal.getConfirmButton();
+                         btn.innerHTML = `
+                             <div class="flex items-center gap-2">
+                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Memproses...</span>
+                             </div>
+                         `;
+                         btn.style.opacity = '0.7';
+                         btn.style.pointerEvents = 'none'; // Disable clicks
+                         
+                         form.submit();
+                    });
+                }
+            });
+
+            return false;
+        };
+
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))
                 window.Toast.fire({
                     icon: 'success',
                     title: "{{ session('success') }}",
                     customClass: {
-                        popup: 'shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl border-l-8 border-emerald-500 bg-white pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
+                        popup: 'shadow-lg shadow-emerald-500/20 rounded-2xl border-l-[6px] border-emerald-500 bg-white/95 backdrop-blur-xl pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
                         title: 'font-bold text-slate-800 text-sm',
                         timerProgressBar: '!bg-emerald-500'
                     },
@@ -199,7 +257,7 @@
                     icon: 'error',
                     title: "{{ session('error') }}",
                     customClass: {
-                        popup: 'shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl border-l-8 border-rose-500 bg-white pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
+                        popup: 'shadow-lg shadow-rose-500/20 rounded-2xl border-l-[6px] border-rose-500 bg-white/95 backdrop-blur-xl pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
                         title: 'font-bold text-slate-800 text-sm',
                         timerProgressBar: '!bg-rose-500'
                     },

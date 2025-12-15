@@ -43,7 +43,7 @@
                                     </a>
                                     @if (auth()->id() !== $user->id)
                                         <form action="{{ route('admin.users.destroy', $user) }}" method="POST"
-                                            onsubmit="return confirm('Hapus user ini?');">
+                                            onsubmit="return confirmAction(event, 'Hapus user ini?', 'danger')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"

@@ -73,7 +73,7 @@
                                         </svg>
                                     </a>
                                     <form action="{{ route('admin.books.destroy', $book) }}" method="POST"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus buku ini?');">
+                                        onsubmit="return confirmAction(event, 'Apakah Anda yakin ingin menghapus buku ini?', 'danger')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"

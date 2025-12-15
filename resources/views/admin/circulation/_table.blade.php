@@ -61,7 +61,7 @@
 
                                     @if ($loan->status === \App\Enums\LoanStatus::PENDING_VALIDATION)
                                     <form action="{{ route('admin.loans.approve', $loan) }}" method="POST"
-                                        onsubmit="return confirm('Setujui peminjaman ini? Pastikan buku fisik sesuai dengan data.');">
+                                        onsubmit="return confirmAction(event, 'Setujui peminjaman ini? Pastikan buku fisik sesuai dengan data.', 'success')">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit"
@@ -72,7 +72,7 @@
                                     </form>
                                 @elseif ($loan->status === \App\Enums\LoanStatus::BORROWED)
                                     <form action="{{ route('admin.loans.return', $loan) }}" method="POST"
-                                        onsubmit="return confirm('Proses pengembalian buku ini? Denda akan dihitung otomatis jika ada.');">
+                                        onsubmit="return confirmAction(event, 'Proses pengembalian buku ini? Denda akan dihitung otomatis jika ada.', 'info')">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit"

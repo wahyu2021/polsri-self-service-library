@@ -156,8 +156,8 @@
                     icon: 'success',
                     title: "{{ session('success') }}",
                     customClass: {
-                        popup: 'shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl border-l-8 border-emerald-500 bg-white pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
-                        title: 'font-bold text-slate-800 text-sm', // Dark text for readability
+                        popup: 'shadow-lg shadow-emerald-500/20 rounded-2xl border-l-[6px] border-emerald-500 bg-white/95 backdrop-blur-xl pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
+                        title: 'font-bold text-slate-800 text-sm',
                         timerProgressBar: '!bg-emerald-500'
                     },
                     iconColor: '#10b981'
@@ -169,8 +169,8 @@
                     icon: 'error',
                     title: "{{ session('error') }}",
                     customClass: {
-                        popup: 'shadow-[0_8px_30px_rgb(0,0,0,0.12)] rounded-2xl border-l-8 border-rose-500 bg-white pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
-                        title: 'font-bold text-slate-800 text-sm', // Dark text for readability
+                        popup: 'shadow-lg shadow-rose-500/20 rounded-2xl border-l-[6px] border-rose-500 bg-white/95 backdrop-blur-xl pl-4 pr-6 py-4 !max-w-[90vw] sm:!max-w-sm',
+                        title: 'font-bold text-slate-800 text-sm',
                         timerProgressBar: '!bg-rose-500'
                     },
                     iconColor: '#f43f5e'
