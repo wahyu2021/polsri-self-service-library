@@ -1,12 +1,11 @@
 <x-layouts.admin title="Laporan & Denda">
 
     <!-- Screen Only: Web Header & Filter -->
-    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Laporan Keuangan</h1>
-            <p class="text-slate-500 text-sm mt-1">Rekapitulasi pendapatan denda dan keterlambatan.</p>
-        </div>
-
+    <x-ui.header 
+        title="Laporan Keuangan" 
+        subtitle="Rekapitulasi pendapatan denda dan keterlambatan."
+        :breadcrumbs="[['label' => 'Laporan']]"
+    >
         <form action="{{ route('admin.reports.index') }}" method="GET"
             class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center gap-2">
             <div class="flex items-center gap-2 px-2">
@@ -31,7 +30,7 @@
                 Export CSV
             </button>
         </form>
-    </div>
+    </x-ui.header>
 
     <!-- Summary Metrics -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

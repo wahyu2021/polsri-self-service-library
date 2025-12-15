@@ -1,6 +1,10 @@
 <x-layouts.admin title="Logbook Pengunjung">
 
-    <x-ui.header title="Logbook Pengunjung" subtitle="Rekapitulasi riwayat kehadiran mahasiswa di perpustakaan." />
+    <x-ui.header 
+        title="Logbook Pengunjung" 
+        subtitle="Rekapitulasi riwayat kehadiran mahasiswa di perpustakaan."
+        :breadcrumbs="[['label' => 'Logbook']]"
+    />
 
     <!-- Filter Section -->
     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm mb-6">

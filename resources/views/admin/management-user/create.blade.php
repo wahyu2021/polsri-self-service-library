@@ -2,17 +2,18 @@
 
     <div class="max-w-2xl mx-auto">
         <!-- Header -->
-        <div class="flex items-center gap-4 mb-8">
-            <a href="{{ route('admin.users.index') }}" class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:border-slate-300 transition shadow-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-            </a>
-            <div>
-                <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Tambah User</h1>
-                <p class="text-slate-500 text-sm mt-1">Buat akun baru untuk Admin atau Mahasiswa.</p>
-            </div>
-        </div>
+        <x-ui.header 
+            title="Tambah User" 
+            subtitle="Buat akun baru untuk Admin atau Mahasiswa."
+            :breadcrumbs="[
+                ['label' => 'User', 'url' => route('admin.users.index')],
+                ['label' => 'Tambah Baru']
+            ]"
+        >
+            <x-ui.link-button :href="route('admin.users.index')" color="gray" icon="arrow-left">
+                Kembali
+            </x-ui.link-button>
+        </x-ui.header>
 
         <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <form action="{{ route('admin.users.store') }}" method="POST" class="p-8" x-data="{ isLoading: false }" @submit="isLoading = true">

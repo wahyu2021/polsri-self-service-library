@@ -59,6 +59,15 @@ class LoanRepository implements LoanRepositoryInterface
                    ->get();
     }
 
+    public function getRecentTransactions(int $limit = 5): Collection
+    {
+        return Loan::with(['user', 'book'])
+                   ->where('status', '!=', LoanStatus::PENDING_VALIDATION)
+                   ->orderBy('updated_at', 'desc')
+                   ->limit($limit)
+                   ->get();
+    }
+
     public function searchLoans(string $query, int $limit = 5): Collection
     {
         return Loan::with(['user', 'book'])

@@ -1,12 +1,10 @@
 <x-layouts.admin title="Dashboard">
     
     <!-- Top Header & Actions -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div>
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Dashboard</h1>
-            <p class="text-slate-500 text-sm">Overview aktivitas perpustakaan hari ini.</p>
-        </div>
-        
+    <x-ui.header 
+        title="Dashboard" 
+        subtitle="Overview aktivitas perpustakaan hari ini."
+    >
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.books.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 hover:border-orange-500 hover:text-orange-600 text-slate-700 text-sm font-bold rounded-lg transition-all shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -21,7 +19,7 @@
                 Anggota
             </a>
         </div>
-    </div>
+    </x-ui.header>
 
     <!-- Metrics Grid -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -88,12 +86,14 @@
     <!-- Layout Grid: 8 columns (Content) + 4 columns (Sidebar) -->
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
         
-        <!-- Main Content (Validation Queue) -->
-        <div class="xl:col-span-8 flex flex-col gap-6">
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <!-- Main Content (Left) -->
+        <div class="xl:col-span-8 flex flex-col gap-8">
+            
+            <!-- 1. Validation Queue -->
+            <div id="validation-queue" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden scroll-mt-24">
                 <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <div class="flex items-center gap-3">
-                        <div class="p-2 bg-white border border-slate-200 rounded-lg">
+                        <div class="p-2 bg-white border border-slate-200 rounded-lg shadow-sm">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                             </svg>
@@ -131,19 +131,131 @@
                     </table>
                 </div>
             </div>
+
+            <!-- 2. Recent Transactions (New) -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-white border border-slate-200 rounded-lg shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-sm">Sirkulasi Terkini</h3>
+                            <p class="text-slate-500 text-xs">Aktivitas peminjaman dan pengembalian terbaru.</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('admin.loans.index') }}" class="text-xs font-bold text-polsri-primary hover:text-orange-700 transition">LIHAT SEMUA</a>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-white text-slate-500 border-b border-slate-100 text-xs uppercase tracking-wider">
+                            <tr>
+                                <th class="px-6 py-4 font-semibold">Waktu</th>
+                                <th class="px-6 py-4 font-semibold">Mahasiswa</th>
+                                <th class="px-6 py-4 font-semibold">Buku</th>
+                                <th class="px-6 py-4 font-semibold text-right">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            @forelse($recentTransactions as $transaction)
+                                <tr class="hover:bg-slate-50/50 transition">
+                                    <td class="px-6 py-4 text-xs text-slate-500">
+                                        {{ $transaction->updated_at->diffForHumans() }}
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="font-bold text-slate-900 text-xs">{{ $transaction->user->name }}</div>
+                                        <div class="text-[10px] text-slate-400 font-mono">{{ $transaction->user->nim }}</div>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <div class="text-xs text-slate-700 truncate max-w-[200px]" title="{{ $transaction->book->title }}">
+                                            {{ $transaction->book->title }}
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        @if($transaction->status == \App\Enums\LoanStatus::BORROWED)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                                DIPINJAM
+                                            </span>
+                                        @elseif($transaction->status == \App\Enums\LoanStatus::RETURNED)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100">
+                                                DIKEMBALIKAN
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                                                {{ $transaction->status->value }}
+                                            </span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-6 py-8 text-center text-slate-400 text-xs">
+                                        Belum ada transaksi sirkulasi.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
 
-        <!-- Sidebar (Activity Feed) -->
+        <!-- Sidebar (Right) -->
         <div class="xl:col-span-4 space-y-6">
             
+            <!-- Weekly Visitors Chart -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-bold text-slate-800 text-sm">Tren Kunjungan</h3>
+                    <span class="text-xs text-slate-400 bg-slate-50 px-2 py-1 rounded-lg">7 Hari Terakhir</span>
+                </div>
+                <div id="visitorsChart" class="-ml-2"></div>
+            </div>
+
+            <!-- Popular Books (New) -->
             <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                 <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                    <h3 class="font-bold text-slate-800 text-sm">Aktivitas Terbaru</h3>
+                    <h3 class="font-bold text-slate-800 text-sm">Buku Populer</h3>
+                    <span class="text-[10px] text-slate-400 font-medium bg-white px-2 py-0.5 rounded border border-slate-100">Top 5</span>
+                </div>
+                <div class="divide-y divide-slate-50">
+                    @forelse($popularBooks as $index => $book)
+                        <div class="flex items-center gap-3 p-4 hover:bg-slate-50/50 transition">
+                            <div class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-slate-100 text-slate-500 font-bold text-xs border border-slate-200">
+                                #{{ $index + 1 }}
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-bold text-slate-900 truncate" title="{{ $book->title }}">{{ $book->title }}</p>
+                                <p class="text-[10px] text-slate-500 truncate">{{ $book->author }}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="inline-flex items-center gap-1 text-xs font-bold text-polsri-primary">
+                                    {{ $book->loans_count }}
+                                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" /></svg>
+                                </span>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="p-6 text-center text-slate-400 text-xs">
+                            Belum ada data peminjaman.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+
+            <!-- Recent Activity Feed -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <h3 class="font-bold text-slate-800 text-sm">Logbook Terbaru</h3>
                     <a href="{{ route('admin.logbooks.index') }}" class="text-[10px] font-bold text-polsri-primary hover:underline">LIHAT SEMUA</a>
                 </div>
 
                 <div class="p-0">
-                    @forelse($recentLogbooks->take(6) as $log)
+                    @forelse($recentLogbooks as $log)
                     <div class="relative flex items-start gap-4 p-4 border-b border-slate-50 hover:bg-slate-50/80 transition-colors last:border-0">
                         <!-- Status Dot -->
                         <div class="mt-1.5 w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] flex-shrink-0"></div>
@@ -162,17 +274,75 @@
                     </div>
                     @endforelse
                 </div>
-                
-                <div class="p-3 bg-slate-50 border-t border-slate-100 text-center">
-                    <p class="text-[10px] text-slate-400">Menampilkan 6 aktivitas terakhir</p>
-                </div>
             </div>
 
         </div>
 
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
+        // Chart Initialization
+        document.addEventListener('DOMContentLoaded', function () {
+            const chartData = @json($chartData);
+            
+            const options = {
+                series: [{
+                    name: 'Pengunjung',
+                    data: chartData.map(item => item.count)
+                }],
+                chart: {
+                    type: 'area',
+                    height: 200,
+                    toolbar: { show: false },
+                    fontFamily: 'Instrument Sans, sans-serif',
+                    zoom: { enabled: false }
+                },
+                colors: ['#f97316'], // Orange-500
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        shadeIntensity: 1,
+                        opacityFrom: 0.4,
+                        opacityTo: 0.05,
+                        stops: [0, 100]
+                    }
+                },
+                dataLabels: { enabled: false },
+                stroke: {
+                    curve: 'smooth',
+                    width: 2
+                },
+                xaxis: {
+                    categories: chartData.map(item => item.date),
+                    axisBorder: { show: false },
+                    axisTicks: { show: false },
+                    labels: {
+                        style: { colors: '#94a3b8', fontSize: '10px' }
+                    }
+                },
+                yaxis: {
+                    show: false
+                },
+                grid: {
+                    show: true,
+                    borderColor: '#f1f5f9',
+                    strokeDashArray: 4,
+                    padding: { left: 0, right: 0, top: 0, bottom: 0 }
+                },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return val + " Mahasiswa"
+                        }
+                    }
+                }
+            };
+
+            const chart = new ApexCharts(document.querySelector("#visitorsChart"), options);
+            chart.render();
+        });
+
         function handleApprove(event, form) {
             event.preventDefault();
             

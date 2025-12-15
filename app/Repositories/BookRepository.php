@@ -54,6 +54,14 @@ class BookRepository implements BookRepositoryInterface
             ->get();
     }
 
+    public function getPopularBooks(int $limit = 5): Collection
+    {
+        return Book::withCount('loans')
+                   ->orderByDesc('loans_count')
+                   ->take($limit)
+                   ->get();
+    }
+
     public function create(array $data): Book
     {
         return Book::create($data);

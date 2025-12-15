@@ -1,7 +1,11 @@
 <x-layouts.admin title="Manajemen Buku">
 
     <!-- Header & Actions -->
-    <x-ui.header title="Katalog Buku" subtitle="Kelola inventaris dan stok buku perpustakaan.">
+    <x-ui.header 
+        title="Katalog Buku" 
+        subtitle="Kelola inventaris dan stok buku perpustakaan."
+        :breadcrumbs="[['label' => 'Buku']]"
+    >
         <!-- Search Form -->
         <form action="{{ route('admin.books.index') }}" method="GET" class="flex gap-3">
             @php

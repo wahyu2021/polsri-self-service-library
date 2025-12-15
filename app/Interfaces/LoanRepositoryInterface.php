@@ -12,6 +12,7 @@ interface LoanRepositoryInterface
     public function getActiveLoansCount(): int;
     public function getOverdueLoansCount(): int;
     public function getPendingValidation(): Collection;
+    public function getRecentTransactions(int $limit = 5): Collection;
     public function searchLoans(string $query, int $limit = 5): Collection;
     
     // Student specific

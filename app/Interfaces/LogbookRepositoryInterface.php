@@ -12,4 +12,5 @@ interface LogbookRepositoryInterface
     public function getRecentEntries(int $limit = 10): Collection;
     public function create(array $data): Logbook;
     public function getAllWithFilters(array $filters, int $perPage = 15);
+    public function getWeeklyStats(): array;
 }

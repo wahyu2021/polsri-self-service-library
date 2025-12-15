@@ -1,7 +1,11 @@
 <x-layouts.admin title="Manajemen Pengguna">
 
     <!-- Header & Actions -->
-    <x-ui.header title="Data Pengguna" subtitle="Kelola akun Admin dan Mahasiswa.">
+    <x-ui.header 
+        title="Data Pengguna" 
+        subtitle="Kelola akun Admin dan Mahasiswa."
+        :breadcrumbs="[['label' => 'User']]"
+    >
 
         <!-- Search Form -->
         <form action="{{ route('admin.users.index') }}" method="GET" class="flex gap-3">

@@ -48,4 +48,23 @@ class LogbookRepository implements LogbookRepositoryInterface
 
         return $query->paginate($perPage);
     }
+
+    public function getWeeklyStats(): array
+    {
+        $stats = [];
+        $today = Carbon::today();
+
+        for ($i = 6; $i >= 0; $i--) {
+            $date = $today->copy()->subDays($i);
+            $count = Logbook::whereDate('check_in_time', $date)->count();
+            
+            $stats[] = [
+                'date' => $date->format('d M'), // Format: 15 Dec
+                'day' => $date->translatedFormat('l'), // Format: Senin
+                'count' => $count
+            ];
+        }
+
+        return $stats;
+    }
 }

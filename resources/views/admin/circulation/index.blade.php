@@ -1,6 +1,10 @@
 <x-layouts.admin title="Sirkulasi Peminjaman">
 
-    <x-ui.header title="Sirkulasi & Transaksi" subtitle="Pantau peminjaman dan pengembalian buku.">
+    <x-ui.header 
+        title="Sirkulasi & Transaksi" 
+        subtitle="Pantau peminjaman dan pengembalian buku."
+        :breadcrumbs="[['label' => 'Sirkulasi']]"
+    >
 
         <form action="{{ route('admin.loans.index') }}" method="GET" class="flex gap-3">
             @php
