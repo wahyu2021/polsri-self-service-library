@@ -29,4 +29,9 @@ class DashboardService
             'recentLogbooks' => $this->logbookRepository->getRecentEntries(10),
         ];
     }
+
+    public function getValidationQueue()
+    {
+        return $this->loanRepository->getPendingValidation();
+    }
 }

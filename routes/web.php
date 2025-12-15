@@ -56,6 +56,7 @@ Route::middleware('auth')->group(function () {
     // Admin Routes
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard/validation-queue', [\App\Http\Controllers\Admin\DashboardController::class, 'getValidationQueue'])->name('dashboard.validation-queue');
         
         // Book Management
         Route::resource('books', \App\Http\Controllers\Admin\BookController::class);

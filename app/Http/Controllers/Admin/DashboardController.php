@@ -38,4 +38,16 @@ class DashboardController extends Controller
 
         return view('admin.dashboard', $stats);
     }
+
+    public function getValidationQueue()
+    {
+        $validationQueue = $this->dashboardService->getValidationQueue();
+
+        $html = view('admin.dashboard-partials.validation-queue-rows', compact('validationQueue'))->render();
+
+        return response()->json([
+            'html' => $html,
+            'count' => $validationQueue->count()
+        ]);
+    }
 }
