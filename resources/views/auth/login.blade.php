@@ -10,7 +10,7 @@
     <form method="POST" action="{{ route('login.store') }}" class="flex flex-col gap-4" x-data="{ isLoading: false }" @submit="isLoading = true">
         @csrf
 
-        <x-ui.input label="Email Address" name="email" type="email" placeholder="student@polsri.ac.id"
+        <x-ui.input label="Email Address" name="email" type="email" placeholder="nim@polsri.ac.id"
             :value="old('email')" required autofocus />
 
         <div class="flex flex-col gap-1">
