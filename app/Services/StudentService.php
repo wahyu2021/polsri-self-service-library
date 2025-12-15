@@ -35,21 +35,32 @@ class StudentService
     }
 
     /**
-     * Get student fine summary
+     * Get student fine summary (including overdue loans)
      */
     public function getStudentFinesSummary(int $userId): array
     {
+        // Unpaid fines (returned with unpaid fine)
         $unpaidFines = \App\Models\Loan::where('user_id', $userId)
             ->where('status', 'returned')
             ->where('fine_amount', '>', 0)
             ->whereRaw('"is_fine_paid" = false')
             ->get();
 
+        // Paid fines (returned with paid fine)
         $paidFines = \App\Models\Loan::where('user_id', $userId)
             ->where('status', 'returned')
             ->where('fine_amount', '>', 0)
             ->whereRaw('"is_fine_paid" = true')
             ->get();
+
+        // Overdue loans (borrowed but past due date = akan ada denda nanti)
+        $overdueLoans = \App\Models\Loan::where('user_id', $userId)
+            ->where('status', 'borrowed')
+            ->where('due_date', '<', now())
+            ->get();
+
+        // Check if there are overdue loans
+        $hasOverdue = $overdueLoans->count() > 0;
 
         return [
             'unpaid_count' => $unpaidFines->count(),
@@ -57,6 +68,8 @@ class StudentService
             'paid_count' => $paidFines->count(),
             'paid_total' => $paidFines->sum('fine_amount'),
             'has_unpaid' => $unpaidFines->count() > 0,
+            'overdue_count' => $overdueLoans->count(),
+            'has_overdue' => $hasOverdue,
         ];
     }
 }
