@@ -86,16 +86,24 @@
                         <!-- Borrow Date -->
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Tanggal Pinjam</label>
-                            <input type="date" name="borrow_date" value="{{ old('borrow_date', $loan->borrow_date->format('Y-m-d')) }}"
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition">
+                            <input 
+                                type="date" 
+                                name="borrow_date" 
+                                value="{{ old('borrow_date') ?? $loan->borrow_date->format('Y-m-d') }}"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition {{ $errors->has('borrow_date') ? 'border-rose-500' : '' }}"
+                                required>
                             @error('borrow_date') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
                         <!-- Due Date -->
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Jatuh Tempo</label>
-                            <input type="date" name="due_date" value="{{ old('due_date', $loan->due_date->format('Y-m-d')) }}"
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition">
+                            <input 
+                                type="date" 
+                                name="due_date" 
+                                value="{{ old('due_date') ?? $loan->due_date->format('Y-m-d') }}"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition {{ $errors->has('due_date') ? 'border-rose-500' : '' }}"
+                                required>
                             @error('due_date') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
@@ -104,8 +112,11 @@
                         <!-- Return Date -->
                         <div>
                             <label class="block text-sm font-bold text-slate-700 mb-2">Tanggal Kembali (Aktual)</label>
-                            <input type="date" name="return_date" value="{{ old('return_date', $loan->return_date?->format('Y-m-d')) }}"
-                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition">
+                            <input 
+                                type="date" 
+                                name="return_date" 
+                                value="{{ old('return_date') ?? ($loan->return_date?->format('Y-m-d') ?? '') }}"
+                                class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-polsri-primary/20 focus:border-polsri-primary transition {{ $errors->has('return_date') ? 'border-rose-500' : '' }}">
                             <p class="text-xs text-slate-400 mt-1.5">Kosongkan jika buku belum dikembalikan.</p>
                             @error('return_date') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
