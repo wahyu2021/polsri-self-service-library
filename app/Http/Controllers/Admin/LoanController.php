@@ -158,12 +158,13 @@ class LoanController extends Controller
                 // Set is_fine_paid based on whether fine amount > 0
                 $data['is_fine_paid'] = empty($data['fine_amount']) || $data['fine_amount'] == 0;
             }
-            // Logika Reset: Jika status BUKAN Returned, hapus data kembali
-            elseif ($data['status'] !== \App\Enums\LoanStatus::RETURNED->value) {
+            // Logika Reset: Jika status diubah DARI Returned ke status lain, hapus data kembali
+            elseif ($data['status'] !== \App\Enums\LoanStatus::RETURNED->value && $loan->status === \App\Enums\LoanStatus::RETURNED) {
                 $data['return_date'] = null;
                 $data['fine_amount'] = 0;
                 $data['is_fine_paid'] = true;
             }
+            // Jika status tetap atau perubahan lain, biarkan user edit freely tanpa reset
 
             $loan->update($data);
 
