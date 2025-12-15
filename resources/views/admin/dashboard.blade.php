@@ -190,7 +190,12 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Poll for new validation requests every 5 seconds
             setInterval(function() {
-                fetch("{{ route('admin.dashboard.validation-queue') }}")
+                fetch("{{ route('admin.dashboard.validation-queue') }}", {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
                     .then(response => response.json())
                     .then(data => {
                         // Update the rows

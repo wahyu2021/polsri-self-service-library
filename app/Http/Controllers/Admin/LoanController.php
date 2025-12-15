@@ -155,8 +155,32 @@ class LoanController extends Controller
                 'status' => \App\Enums\LoanStatus::BORROWED,
             ]);
 
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Peminjaman berhasil disetujui. Mahasiswa diizinkan keluar.',
+                ]);
+            }
+
+            // Fix: Prevent redirecting to AJAX endpoint if polling updated the session's previous URL
+            if (str_contains(url()->previous(), 'validation-queue')) {
+                return redirect()->route('admin.dashboard')
+                    ->with('success', 'Peminjaman mandiri berhasil diverifikasi. Mahasiswa diizinkan keluar.');
+            }
+
             return back()->with('success', 'Peminjaman mandiri berhasil diverifikasi. Mahasiswa diizinkan keluar.');
         } catch (\Exception $e) {
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                ], 400);
+            }
+
+            if (str_contains(url()->previous(), 'validation-queue')) {
+                return redirect()->route('admin.dashboard')
+                    ->with('error', $e->getMessage());
+            }
             return back()->with('error', $e->getMessage());
         }
     }

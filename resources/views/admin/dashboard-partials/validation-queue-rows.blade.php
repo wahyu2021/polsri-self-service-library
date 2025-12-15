@@ -28,7 +28,7 @@
         </div>
     </td>
     <td class="px-6 py-4 align-top text-right">
-        <form action="{{ route('admin.loans.approve', $loan->id) }}" method="POST" onsubmit="return confirm('Setujui peminjaman ini?');">
+        <form action="{{ route('admin.loans.approve', $loan->id) }}" method="POST" onsubmit="return handleApprove(event, this);">
             @csrf
             @method('PUT')
             <button type="submit" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition-all hover:shadow hover:-translate-y-0.5">

@@ -89,11 +89,11 @@
                                 Buku</h3>
                             <p id="preview-author" class="text-slate-500 text-sm mb-6">Penulis</p>
 
-                            <form method="POST" action="{{ route('student.borrow.store') }}">
+                            <form method="POST" action="{{ route('student.borrow.store') }}" id="borrow-form">
                                 @csrf
                                 <input type="hidden" name="isbn" id="confirm-isbn">
 
-                                <button type="submit"
+                                <button type="submit" id="btn-borrow-submit"
                                     class="w-full bg-polsri-primary hover:bg-orange-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-orange-200 active:scale-95 transition-transform flex items-center justify-center gap-2">
                                     <span>Ajukan Peminjaman</span>
                                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

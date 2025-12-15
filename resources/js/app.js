@@ -1,8 +1,7 @@
 import './bootstrap';
-
+import 'animate.css';
 import Alpine from 'alpinejs';
 import Swal from 'sweetalert2';
-import 'animate.css';
 
 window.Alpine = Alpine;
 window.Swal = Swal;
