@@ -59,6 +59,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard/validation-queue', [\App\Http\Controllers\Admin\DashboardController::class, 'getValidationQueue'])->name('dashboard.validation-queue');
         
         // Book Management
+        Route::get('books/{book}/print-label', [\App\Http\Controllers\Admin\BookController::class, 'printLabel'])->name('books.print-label');
         Route::resource('books', \App\Http\Controllers\Admin\BookController::class);
         
         // Logbook Management

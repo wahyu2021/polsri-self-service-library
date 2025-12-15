@@ -81,4 +81,9 @@ class BookController extends Controller
         return redirect()->route('admin.books.index')
             ->with('success', 'Buku berhasil dihapus dari sistem.');
     }
+
+    public function printLabel(Book $book)
+    {
+        return view('admin.management-book.print-label', compact('book'));
+    }
 }
