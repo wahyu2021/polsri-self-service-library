@@ -61,10 +61,8 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="5" class="px-6 py-12 text-center text-slate-400">Tidak ada user ditemukan.
-                            </td>
-                        </tr>
+                        <x-ui.empty-state colspan="5" message="Tidak ada user ditemukan" 
+                            submessage="Coba ubah filter atau kata kunci pencarian Anda." />
                     @endforelse
                 </tbody>
             </table>

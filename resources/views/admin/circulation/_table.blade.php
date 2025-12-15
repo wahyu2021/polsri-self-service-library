@@ -92,23 +92,8 @@
                             </td>
                         </tr>
                     @empty
-                        <tr>
-                            <td colspan="6" class="px-6 py-12 text-center text-slate-400">
-                                <div class="flex flex-col items-center gap-3">
-                                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 opacity-50"
-                                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <p class="font-medium text-slate-900">Belum ada riwayat transaksi</p>
-                                        <p class="text-xs mt-1">Buat peminjaman baru untuk memulai.</p>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
+                        <x-ui.empty-state colspan="6" message="Belum ada riwayat transaksi" 
+                            submessage="Buat peminjaman baru untuk memulai." />
                     @endforelse
                 </tbody>
             </table>

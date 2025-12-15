@@ -95,16 +95,8 @@
                         </td>
                     </tr>
                     @empty
-                    <tr>
-                        <td colspan="4" class="px-6 py-12 text-center text-slate-400">
-                            <div class="flex flex-col items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                </svg>
-                                <span class="text-sm">Tidak ada data logbook yang ditemukan.</span>
-                            </div>
-                        </td>
-                    </tr>
+                        <x-ui.empty-state colspan="4" message="Tidak ada data logbook" 
+                            submessage="Coba ubah tanggal atau kata kunci pencarian." />
                     @endforelse
                 </tbody>
             </table>
