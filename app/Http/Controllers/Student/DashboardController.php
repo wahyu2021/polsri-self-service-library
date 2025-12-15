@@ -31,6 +31,7 @@ class DashboardController extends Controller
             'activeLoans' => $data['activeLoans'],
             'historyLoans' => $data['historyLoans'],
             'notifications' => $data['notifications'],
+            'fineData' => $data['fineData'],
             'recommendations' => $recommendations
         ]);
     }
