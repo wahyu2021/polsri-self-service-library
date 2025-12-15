@@ -18,12 +18,19 @@ class NotificationComposer
 
     public function compose(View $view)
     {
-        if (!Auth::check() || Auth::user()->role->value !== 'mahasiswa') {
+        if (!Auth::check()) {
             return;
         }
 
-        // Efficient count query on the notifications table
-        $count = Auth::user()->unreadNotifications()->count();
+        $count = 0;
+
+        if (Auth::user()->role->value === 'mahasiswa') {
+            // Untuk Mahasiswa: Notifikasi sistem (denda, jatuh tempo, dll)
+            $count = Auth::user()->unreadNotifications()->count();
+        } elseif (Auth::user()->role->value === 'admin') {
+            // Untuk Admin: Jumlah peminjaman yang menunggu persetujuan (Pending)
+            $count = \App\Models\Loan::where('status', \App\Enums\LoanStatus::PENDING_VALIDATION)->count();
+        }
 
         $view->with('globalNotificationCount', $count);
     }

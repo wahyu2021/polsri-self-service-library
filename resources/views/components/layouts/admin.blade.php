@@ -133,7 +133,7 @@
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         <!-- Top Bar -->
-        <header class="bg-white/80 backdrop-blur-xl border-b border-slate-200 h-16 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30 transition-all duration-300 shadow-sm shadow-slate-200/50">
+        <header class="bg-white/90 backdrop-blur-md border-b border-slate-200/80 h-16 flex items-center justify-between px-4 lg:px-8 sticky top-0 z-30 transition-all duration-300 shadow-[0_4px_20px_-10px_rgba(0,0,0,0.05)]">
             <!-- Left: Toggle & Title -->
             <div class="flex items-center gap-4">
                 <button @click="sidebarOpen = true" class="text-slate-500 hover:text-slate-700 lg:hidden p-2 rounded-xl hover:bg-slate-100 transition active:scale-95">
@@ -141,39 +141,50 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                 </button>
+                
                 <div class="hidden md:block">
                     <h2 class="font-bold text-slate-800 text-lg tracking-tight">{{ $title ?? 'Admin Panel' }}</h2>
                 </div>
             </div>
 
             <!-- Right: Actions -->
-            <div class="flex items-center gap-3 sm:gap-4">
+            <div class="flex items-center gap-2 sm:gap-4">
                 
                 <!-- Global Date Widget -->
-                <div class="hidden md:flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-100/50 px-3 py-1.5 rounded-lg border border-slate-200/50">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+                <div class="hidden xl:flex items-center gap-2 text-xs font-semibold text-slate-500 bg-white border border-slate-200 px-3 py-1.5 rounded-full shadow-sm">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     {{ now()->translatedFormat('l, d F Y') }}
                 </div>
 
+                <!-- Notification Bell (Real Logic) -->
+                <a href="{{ route('admin.dashboard') }}#validation-queue" class="relative p-2.5 rounded-xl text-slate-500 hover:text-slate-700 hover:bg-slate-100/80 transition-all active:scale-95 group" title="Cek Validasi Peminjaman">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 transition-transform group-hover:rotate-12 origin-top" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    @if(isset($globalNotificationCount) && $globalNotificationCount > 0)
+                        <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 border-2 border-white rounded-full animate-pulse"></span>
+                    @endif
+                </a>
+
                 <!-- Divider -->
-                <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
+                <div class="h-8 w-px bg-slate-200 mx-1 hidden sm:block"></div>
 
                 <!-- User Dropdown -->
                 <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" @click.outside="open = false" class="flex items-center gap-3 pl-2 pr-1 py-1 rounded-xl hover:bg-slate-50 transition group">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-sm font-bold text-slate-800 group-hover:text-polsri-primary transition leading-none">{{ Auth::user()->name }}</p>
-                            <span class="text-[10px] text-slate-500 font-medium uppercase tracking-wider bg-slate-100 px-1.5 py-0.5 rounded mt-1 inline-block">Administrator</span>
-                        </div>
-                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-100 to-slate-200 border-2 border-white shadow-sm flex items-center justify-center text-slate-600 font-bold overflow-hidden ring-2 ring-transparent group-hover:ring-slate-100 transition-all">
+                    <button @click="open = !open" @click.outside="open = false" class="flex items-center gap-3 pl-1 pr-1 py-1 rounded-full hover:bg-slate-100/80 border border-transparent hover:border-slate-200 transition-all group">
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-polsri-primary to-orange-600 text-white flex items-center justify-center font-bold text-sm shadow-md shadow-orange-500/20 ring-2 ring-transparent group-hover:ring-offset-2 group-hover:ring-polsri-primary transition-all">
                              {{ substr(Auth::user()->name, 0, 1) }}
                         </div>
+                        <div class="text-left hidden sm:block pr-2">
+                            <p class="text-xs font-bold text-slate-700 group-hover:text-slate-900 transition leading-none">{{ Auth::user()->name }}</p>
+                            <p class="text-[10px] text-slate-400 font-medium leading-none mt-1">Administrator</p>
+                        </div>
                         <!-- Chevron -->
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 hidden sm:block transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
+                        <div class="hidden sm:flex items-center justify-center w-5 h-5 text-slate-400 mr-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </div>
                     </button>
 
                     <!-- Dropdown Menu -->

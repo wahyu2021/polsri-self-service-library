@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
         }
 
         // Inject notifikasi ke layout utama kapanpun ia dirender
-        View::composer('components.layouts.app', NotificationComposer::class);
+        View::composer(['components.layouts.app', 'components.layouts.admin'], NotificationComposer::class);
         
         // Custom Pagination View
         Paginator::defaultView('pagination.polsri');
